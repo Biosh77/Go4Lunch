@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Go4Lunch</string>
+    <string name="title_activity_accueil">MainActivity</string>
+    <string name="Map_View">Map View</string>
+    <string name="List_View">List View</string>
+    <string name="Workmates">Workmates</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/Map_View_main">
+
+    <fragment
+        android:id="@+id/Map_View_main"
+        android:name="com.example.go4lunch.ui.map.MapFragment"
+        android:label="@string/Map_View"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/List_View"
+        android:name="com.example.go4lunch.ui.list.ListFragment"
+        android:label="@string/List_View"
+        tools:layout="@layout/fragment_list" />
+
+    <fragment
+        android:id="@+id/Workmates"
+        android:name="com.example.go4lunch.ui.workmates.WorkmatesFragment"
+        android:label="@string/Workmates"
+        tools:layout="@layout/fragment_workmates" />
+</navigation>
