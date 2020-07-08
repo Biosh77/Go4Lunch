@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/Map_View_main"
         android:name="com.example.go4lunch.ui.map.MapFragment"
-        android:label="@string/Map_View"
+        android:label="@string/Map_View_Main"
         tools:layout="@layout/fragment_map" />
 
     <fragment
