@@ -4,9 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    >
 
-    <LinearLayout
+    <ImageView
+        android:layout_width="match_parent"
+        android:id="@+id/lunch"
+        android:layout_height="match_parent"
+        android:background="@drawable/eat"
+        android:scaleType="centerCrop"
+        />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
@@ -18,28 +27,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/go_4"
-        android:layout_margin="50dp"
+        android:id="@+id/go4lunch"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"
+
         />
 
         <!-- BUTTTONS CONTAINER -->
 
-        <LinearLayout
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="20dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:layout_below="@id/go4lunch"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="40dp"
             >
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login__fb_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/sign_in_button"
+                android:layout_marginTop="10dp" />
+
 
             <!-- BUTTON TEST -->
             <Button
                 android:id="@+id/test_button"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#fff"
-                style="?android:attr/borderlessButtonStyle"
-                />
+                android:layout_below="@id/login__fb_button"
+                android:textColor="#fff" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

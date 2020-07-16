@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Go4Lunch</string>
-    <string name="title_activity_accueil">MainActivity</string>
+    <string name="title_activity_accueil">Accueil</string>
     <string name="Map_View_Main">Map View</string>
     <string name="List_View">List View</string>
     <string name="Workmates">Workmates</string>
+    <string name="facebook_app_id">199776401444652</string>
 </resources>
