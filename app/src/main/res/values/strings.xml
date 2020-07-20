@@ -1,8 +1,13 @@
 <resources>
+
     <string name="app_name">Go4Lunch</string>
     <string name="title_activity_accueil">Accueil</string>
     <string name="Map_View_Main">Map View</string>
     <string name="List_View">List View</string>
     <string name="Workmates">Workmates</string>
     <string name="facebook_app_id">199776401444652</string>
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
