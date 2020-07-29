@@ -17,4 +17,4 @@
         android:icon="@drawable/ic_workmates_foreground"
         android:title="@string/Workmates" />
 
-</menu>
+    </menu>

@@ -9,38 +9,13 @@
     tools:openDrawer="start">
 
 
-    <!-- MainActivity RootView -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <include layout="@layout/toolbar" />
-
-        <!-- FrameLayout for our fragments -->
-        <FrameLayout
-            android:id="@+id/accueil_frame_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
-
-    <!-- NavigationView -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/accueil_nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#FF7F50"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/accueil_nav_header"
-        app:menu="@menu/accueil_menu_drawer" />
-
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <include layout="@layout/toolbar" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/nav_view"
@@ -59,6 +34,7 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
             app:defaultNavHost="true"
             app:layout_constraintBottom_toTopOf="@id/nav_view"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -66,6 +42,18 @@
             app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/mobile_navigation" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- NavigationView -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/accueil_nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FF7F50"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/accueil_nav_header"
+        app:menu="@menu/accueil_menu_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

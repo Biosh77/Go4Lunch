@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
-
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +31,7 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-
+    private FirebaseAuth mAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -39,7 +39,7 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
 
-        this.navLogOut();
+        mAuth = FirebaseAuth.getInstance();
 
         this.configureToolBar();
 
@@ -47,9 +47,10 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
 
         this.configureNavigationView();
 
-        OnBottomNavigation();
+        this.OnBottomNavigation();
     }
 
+    // BOTTOM NAV MENU
 
     private void OnBottomNavigation() {
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -63,25 +64,53 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+    // DRAWER
+
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Navigation Item Click
-        int id = menuItem.getItemId();
+        int id = item.getItemId();
 
         switch (id) {
             case R.id.accueil_drawer_yourlunch:
+                Toast.makeText(this, "LUNCH", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.accueil_drawer_settings:
+                Toast.makeText(this, "SETTINGS", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.accueil_drawer_logout:
-                break;
-            default:
+                logOut();
                 break;
         }
-
         this.drawerLayout.closeDrawer(GravityCompat.START);
-
         return true;
+    }
+
+    private void logOut() {
+        // Firebase sign out
+        mAuth.signOut();
+        // Google sign out
+        GoogleSignOut();
+        // FaceBook sign out
+
+        sendToLogin();
+    }
+
+    private void GoogleSignOut(){
+        GoogleSignInOptions gso = new GoogleSignInOptions.
+                Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
+                build();
+
+        GoogleSignInClient googleSignInClient= GoogleSignIn.getClient(this,gso);
+        googleSignInClient.signOut();
+    }
+
+    private void sendToLogin() {
+
+        Intent loginIntent = new Intent(AccueilActivity.this, MainActivity.class);
+        startActivity(loginIntent);
+        finish();
+
     }
 
     @Override
@@ -117,29 +146,10 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
         toggle.syncState();
     }
 
-    // onfigure NavigationView
+    // Configure NavigationView
     private void configureNavigationView() {
         this.navigationView = (NavigationView) findViewById(R.id.accueil_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
-
-    //Logout
-
-    private void navLogOut() {
-        NavigationView navigationView = findViewById(R.id.accueil_nav_view);
-        navigationView.getMenu().findItem(R.id.accueil_drawer_logout).setOnMenuItemClickListener(menuItem -> {
-            logout();
-            return true;
-        });
-    }
-
-    private void logout() {
-        FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(AccueilActivity.this, MainActivity.class);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-    }
 }

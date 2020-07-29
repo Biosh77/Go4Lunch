@@ -5,7 +5,14 @@
     <string name="Map_View_Main">Map View</string>
     <string name="List_View">List View</string>
     <string name="Workmates">Workmates</string>
-    <string name="facebook_app_id">199776401444652</string>
+    <string name="LUNCH">YOUR LUNCH</string>
+    <string name="SETTINGS">SETTINGS</string>
+    <string name="LogOut">LOGOUT</string>
+
+    <string name="facebook_app_id">199776401444652</string> <string name="fb_login_protocol_scheme">fb199776401444652</string>
+
+
+    <string name="web_client_id" translatable="false">393519322474-gnp7gcd6gt03goskrpduc2c7pf5m7ssd.apps.googleusercontent.com</string>
 
     <!-- Used in NavigationDrawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
