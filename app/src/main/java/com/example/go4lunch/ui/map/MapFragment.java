@@ -1,6 +1,6 @@
 package com.example.go4lunch.ui.map;
 
-import androidx.annotation.Nullable;
+
 import androidx.fragment.app.Fragment;
 
 
@@ -18,6 +18,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MapFragment extends Fragment  {
 
@@ -31,6 +35,11 @@ public class MapFragment extends Fragment  {
 
         mMapView = (MapView) rootView.findViewById(R.id.Map_View);
         mMapView.onCreate(savedInstanceState);
+
+        // Initialize the SDK
+        Places.initialize(getApplicationContext(), "AIzaSyCCRTXL8c5E8YFCLDj33ZI66bxaVpO9MmY");
+        // Create a new PlacesClient instance
+        PlacesClient placesClient = Places.createClient(getContext());
 
         mMapView.onResume(); // needed to get the map to display immediately
 

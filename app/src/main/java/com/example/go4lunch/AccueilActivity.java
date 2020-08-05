@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -92,6 +93,7 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
         // Google sign out
         GoogleSignOut();
         // FaceBook sign out
+        LoginManager.getInstance().logOut();
 
         sendToLogin();
     }
