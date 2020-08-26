@@ -23,7 +23,7 @@ public class ListFragment extends Fragment {
         listViewModel =
                 ViewModelProviders.of(this).get(ListViewModel.class);
         View root = inflater.inflate(R.layout.fragment_list, container, false);
-        final TextView textView = root.findViewById(R.id.List_View2);
+        final TextView textView = root.findViewById(R.id.list_recycler);
         listViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {

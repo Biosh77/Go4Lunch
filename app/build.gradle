@@ -68,12 +68,26 @@ android {
         annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
 
         //BUTTERKNIFE
-        compile 'com.jakewharton:butterknife:8.8.1'
+        implementation 'com.jakewharton:butterknife:8.8.1'
         annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
         //PLACES
         implementation 'com.google.android.libraries.places:places:2.3.0'
 
+        //GSON
+        implementation 'com.google.code.gson:gson:2.8.2'
+
+        //RETROFIT
+        implementation 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+        implementation 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+
+        implementation 'com.squareup.okhttp:okhttp:2.4.0'
+
+        implementation 'com.google.android.gms:play-services-maps:17.0.0'
+        implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+        //FIRESTORE
+        implementation 'com.google.firebase:firebase-firestore:21.5.0'
     }
 
     apply plugin: 'com.google.gms.google-services'

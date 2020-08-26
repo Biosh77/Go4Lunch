@@ -4,16 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    >
+    tools:context=".MainActivity">
 
     <ImageView
-        android:layout_width="match_parent"
         android:id="@+id/lunch"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/eat"
-        android:scaleType="centerCrop"
-        />
+        android:scaleType="centerCrop" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,17 +19,17 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-    <!-- IMAGE VIEW GO4Lunch -->
-    <ImageView
+        <!-- IMAGE VIEW GO4Lunch -->
+        <ImageView
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/go_4"
-        android:id="@+id/go4lunch"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"
+            android:id="@+id/go4lunch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/go_4"
 
-        />
+            />
 
         <!-- BUTTTONS CONTAINER -->
 
@@ -39,11 +37,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
             android:layout_below="@id/go4lunch"
-            android:layout_marginRight="40dp"
             android:layout_marginLeft="40dp"
-            >
+            android:layout_marginTop="150dp"
+            android:layout_marginRight="40dp">
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"

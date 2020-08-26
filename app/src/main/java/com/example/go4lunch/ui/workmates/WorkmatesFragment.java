@@ -23,7 +23,7 @@ public class WorkmatesFragment extends Fragment {
         workmatesViewModel =
                 ViewModelProviders.of(this).get(WorkmatesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_workmates, container, false);
-        final TextView textView = root.findViewById(R.id.text_workmates);
+        final TextView textView = root.findViewById(R.id.workmates_recycler);
         workmatesViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
