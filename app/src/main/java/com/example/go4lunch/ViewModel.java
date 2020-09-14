@@ -16,13 +16,13 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     RestaurantDataRepository restaurantDataRepository;
     UserDataRepository userDataRepository;
 
-    public ViewModel(RestaurantDataRepository restaurantDataRepository, UserDataRepository userDataRepository) {
-        this.restaurantDataRepository = restaurantDataRepository;
-        this.userDataRepository = userDataRepository;
+    public ViewModel(RestaurantDataRepository restaurantDataSource, UserDataRepository userDataSource) {
+        this.restaurantDataRepository = restaurantDataSource;
+        this.userDataRepository = userDataSource;
     }
 
     public void init(android.location.Location location) {
-        restaurants = restaurantDataRepository.getRestaurant(location);
+        restaurants = restaurantDataRepository.getRestaurants(location);
     }
 
     public LiveData<List<Result>> getRestaurant() {

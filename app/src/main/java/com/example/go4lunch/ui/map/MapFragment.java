@@ -1,9 +1,12 @@
 package com.example.go4lunch.ui.map;
 
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 
 import android.Manifest;
@@ -18,32 +21,30 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.go4lunch.R;
+import com.example.go4lunch.ViewModel;
 import com.example.go4lunch.googlemapsretrofit.RetrofitMaps;
 import com.example.go4lunch.googlemapsretrofit.pojo.Example;
-import com.example.go4lunch.googlemapsretrofit.pojo.Location;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.injection.Injection;
+import com.example.go4lunch.injection.ViewModelFactory;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
+
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
+
+
+import java.util.List;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MapFragment extends Fragment implements LocationListener {
 
@@ -55,6 +56,7 @@ public class MapFragment extends Fragment implements LocationListener {
     private final int REQUEST_FINE_LOCATION = 1234;
     private int PROXIMITY_RADIUS = 15000;
 
+    private ViewModel RestaurantViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,11 +69,7 @@ public class MapFragment extends Fragment implements LocationListener {
 
 
 
-        try {
-            MapsInitializer.initialize(getContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mapsInitializer();
 
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -83,20 +81,33 @@ public class MapFragment extends Fragment implements LocationListener {
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
 
-                else{
+                else {
                     googleMap.setMyLocationEnabled(true);
                     try {
                         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                        locationManager.requestLocationUpdates("gps", 0, 0,MapFragment.this);
+                        locationManager.requestLocationUpdates("gps", 0, 0, MapFragment.this);
                     } catch (SecurityException ex) {
                         Log.d("gps", "Location permission did not work!");
                     }
                 }
-                }
+            }
         });
 
         return rootView;
     }
+
+
+    public void mapsInitializer() {
+
+        try {
+            MapsInitializer.initialize(getContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
 
 
     @Override
@@ -128,49 +139,40 @@ public class MapFragment extends Fragment implements LocationListener {
         onlyOneLocation = location;
         locationManager.removeUpdates(this);
 
-        // 2.2 - Get a Retrofit instance and the related endpoints
-        RetrofitMaps mapsService = RetrofitMaps.retrofit.create(RetrofitMaps.class);
-
-        // 2.3 - Create the call on the API
-        Call<Example> call = mapsService.getNearbyPlaces("restaurant", onlyOneLocation.getLatitude() + "," + onlyOneLocation.getLongitude(), PROXIMITY_RADIUS);
-        // 2.4 - Start the call
-        call.enqueue(new Callback<Example>() {
-
-            @Override
-            public void onResponse(Response<Example> response, Retrofit retrofit) {
-                try {
-                    mMap.clear();
-                    // This loop will go through all the results and add marker on each location.
-                    for (int i = 0; i < response.body().getResults().size(); i++) {
-                        Double lat = response.body().getResults().get(i).getGeometry().getLocation().getLat();
-                        Double lng = response.body().getResults().get(i).getGeometry().getLocation().getLng();
-                        String placeName = response.body().getResults().get(i).getName();
-                        String vicinity = response.body().getResults().get(i).getVicinity();
-                        MarkerOptions markerOptions = new MarkerOptions();
-                        LatLng latLng = new LatLng(lat, lng);
-                        // Position of Marker on Map
-                        markerOptions.position(latLng);
-                        // Adding Title to the Marker
-                        markerOptions.title(placeName + " : " + vicinity);
-                        // Adding Marker to the Camera.
-                        mMap.addMarker(markerOptions);
-                        // Adding colour to the marker
-                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                        // move map camera
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        RestaurantViewModel = ViewModelProviders.of(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        RestaurantViewModel.init(onlyOneLocation);
+        RestaurantViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
+                    @Override
+                    public void onChanged(List<Result> results) {
+                        try {
+                            mMap.clear();
+                            // This loop will go through all the results and add marker on each location.
+                            for (int i = 0; i < results.size(); i++) {
+                                Double lat = results.get(i).getGeometry().getLocation().getLat();
+                                Double lng = results.get(i).getGeometry().getLocation().getLng();
+                                String placeName = results.get(i).getName();
+                                String vicinity = results.get(i).getVicinity();
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                LatLng latLng = new LatLng(lat, lng);
+                                // Position of Marker on Map
+                                markerOptions.position(latLng);
+                                // Adding Title to the Marker
+                                markerOptions.title(placeName + " : " + vicinity);
+                                // Adding Marker to the Camera.
+                                mMap.addMarker(markerOptions);
+                                // Adding colour to the marker
+                                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                // move map camera
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                                mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                            }
+                        } catch (Exception e) {
+                            Log.d("onResponse", "There is an error");
+                            e.printStackTrace();
+                        }
                     }
-                } catch (Exception e) {
-                    Log.d("onResponse", "There is an error");
-                    e.printStackTrace();
                 }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d("TAG", "onFailure: " + t.getMessage());
-            }
-        });
+        );
     }
 
 

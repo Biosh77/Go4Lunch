@@ -9,7 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.example.go4lunch.R;
+import com.example.go4lunch.googlemapsretrofit.pojo.Result;
 
 
 import butterknife.BindView;
@@ -35,7 +38,6 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     ImageView imageViewPhoto;
 
 
-
     // FOR DATA
 
     ListViewHolder(@NonNull View itemView) {
@@ -43,5 +45,20 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
+    public void updateWithData(Result results, android.location.Location mLocation) {
+        RequestManager glide = Glide.with(itemView);
+
+
+        // Nom
+        this.textViewName.setText(results.getName());
+
+        //Photo
+        // this.imageViewPhoto...
+        //results.getPhotos();
+
+
+
+
+    }
 
 }

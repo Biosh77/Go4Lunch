@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +12,6 @@
         android:layout_height="250dp" />
 
     <LinearLayout
-        android:id="@+id/viewB"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="15"
@@ -60,18 +60,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="15"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:orientation="horizontal">
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/nav_view_detailRestaurant"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:menu="@menu/nav_restaurant_details" />
 
-        //buttton
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_margin="10dp"
         android:background="#A9A9A9" />
 
 

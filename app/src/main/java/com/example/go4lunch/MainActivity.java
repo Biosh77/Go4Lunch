@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.base.BaseActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -17,6 +18,7 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+//import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -66,13 +68,34 @@ public class MainActivity extends BaseActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
+        // Access a Cloud Firestore instance from your Activity
+        //FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         FbSignIn();
         GoogleSignIn();
         signIn();
     }
 
 
-    // FaceBook
+    //--------
+    // REQUEST
+    //--------
+
+    private void createUserInFirestore() {
+        if (this.getCurrentUser() != null) {
+
+            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+            String username = this.getCurrentUser().getDisplayName();
+            String uid = this.getCurrentUser().getUid();
+
+            UserDataRepository.createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener());
+        }
+    }
+
+
+    //---------
+    // FACEBOOK
+    //---------
 
     private void FbSignIn() {
         btn_fb_login.setOnClickListener(v -> {
@@ -131,7 +154,9 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
+    //------
     //GOOGLE
+    //------
 
     private void GoogleSignIn() {
         mGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -157,12 +182,14 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    // ActivityResult GOOGLE/FB
+    // -----------------------------
+    // UTILS / ActivityResult GOOGLE/FB
+    //-------------------------------
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        this.handleResponseAfterSignIn(requestCode, resultCode, data);
 
         if (requestCode == GOOGLE_SIGN) {
             Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -192,5 +219,21 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
+        //IdpResponse response = IdpResponse.fromResultIntent(data);
+        if (requestCode == GOOGLE_SIGN) {
+            if (resultCode == RESULT_OK) {
+                this.createUserInFirestore();
+            } //else {
+            //if (response == null){
+
+            //  }
+        }
+    }
 }
+
+
+
+
+
 

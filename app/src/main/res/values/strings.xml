@@ -8,6 +8,10 @@
     <string name="LUNCH">YOUR LUNCH</string>
     <string name="SETTINGS">SETTINGS</string>
     <string name="LogOut">LOGOUT</string>
+    <string name="Website">WEBSITE</string>
+    <string name="Like">LIKE</string>
+    <string name="Call">CALL</string>
+
 
     <string name="facebook_app_id">199776401444652</string> <string name="fb_login_protocol_scheme">fb199776401444652</string>
 
@@ -17,6 +21,12 @@
     <!-- Used in NavigationDrawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- MAIN ACTIVITY -->
+
+    <string name="error_unknown_error">Une erreur inconnue s\'est produite</string>
+    <string name="info_no_username_found">Pas de nom d\'utilisateur</string>
+    <string name="info_no_email_found">Pas d\'email</string>
 
 
 </resources>

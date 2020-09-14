@@ -1,42 +1,28 @@
 package com.example.go4lunch.models;
 
+import androidx.annotation.Nullable;
+
 public class Workmate {
 
-    private long id;
+    private String uid;
     private String username;
+    @Nullable
     private String urlPicture;
 
-    public Workmate(long id, String username, String urlPicture) {
-        this.id = id;
+
+    public Workmate(String uid, String username, String urlPicture) {
+        this.uid = uid;
         this.username = username;
         this.urlPicture = urlPicture;
     }
 
+    // --- GETTERS ---
+    public String getUid() { return uid; }
+    public String getUsername() { return username; }
+    public String getUrlPicture() { return urlPicture; }
 
-    // --- GETTER ---- //
-
-
-    public long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getUrlPicture() {
-        return urlPicture;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setUrlPicture(String urlPicture) {
-        this.urlPicture = urlPicture;
-    }
+    // --- SETTERS ---
+    public void setUsername(String username) { this.username = username; }
+    public void setUid(String uid) { this.uid = uid; }
+    public void setUrlPicture(String urlPicture) { this.urlPicture = urlPicture; }
 }

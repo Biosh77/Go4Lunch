@@ -1,11 +1,11 @@
 package com.example.go4lunch.injection;
 
-        import androidx.annotation.NonNull;
-        import androidx.lifecycle.ViewModel;
-        import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
-        import com.example.go4lunch.repository.RestaurantDataRepository;
-        import com.example.go4lunch.repository.UserDataRepository;
+import com.example.go4lunch.repository.RestaurantDataRepository;
+import com.example.go4lunch.repository.UserDataRepository;
 
 public class ViewModelFactory implements ViewModelProvider.Factory {
 

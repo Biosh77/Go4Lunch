@@ -1,11 +1,15 @@
 package com.example.go4lunch;
 
 import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.go4lunch.base.BaseActivity;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -15,9 +19,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -26,7 +28,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.appcompat.widget.Toolbar;
 
-public class AccueilActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import butterknife.BindView;
+
+public class AccueilActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //FOR DESIGN
     private Toolbar toolbar;
@@ -34,21 +38,49 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    // @Override
+    // protected void onCreate(Bundle savedInstanceState) {
+    //    super.onCreate(savedInstanceState);
+    //   setContentView(R.layout.activity_accueil);
+
+    //   mAuth = FirebaseAuth.getInstance();
+
+
+    //   this.configureToolBar();
+
+    //  this.configureDrawerLayout();
+
+    //  this.configureNavigationView();
+
+    //  this.OnBottomNavigation();
+    //  }
+
+    @BindView(R.id.accueil_nav_view)
+    NavigationView accueilNavView;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accueil);
+    public int getLayout() {
+        return R.layout.activity_accueil;
+    }
+
+    @Override
+    protected void onConfigureDesign() {
 
         mAuth = FirebaseAuth.getInstance();
 
+
         this.configureToolBar();
+
+        this.OnBottomNavigation();
 
         this.configureDrawerLayout();
 
         this.configureNavigationView();
 
-        this.OnBottomNavigation();
+        this.updateUIWhenCreating();
+
     }
 
     // BOTTOM NAV MENU
@@ -98,12 +130,12 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
         sendToLogin();
     }
 
-    private void GoogleSignOut(){
+    private void GoogleSignOut() {
         GoogleSignInOptions gso = new GoogleSignInOptions.
                 Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
                 build();
 
-        GoogleSignInClient googleSignInClient= GoogleSignIn.getClient(this,gso);
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
         googleSignInClient.signOut();
     }
 
@@ -152,6 +184,42 @@ public class AccueilActivity extends AppCompatActivity implements NavigationView
     private void configureNavigationView() {
         this.navigationView = (NavigationView) findViewById(R.id.accueil_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    // --------------------
+    // UI
+    // --------------------
+
+    // Arranging method that updating UI with Firestore data
+
+    private void updateUIWhenCreating() {
+
+
+
+        ImageView avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar_user);
+
+
+        TextView user = navigationView.getHeaderView(0).findViewById(R.id.user_name);
+
+
+        TextView email2 = navigationView.getHeaderView(0).findViewById(R.id.user_email);
+
+
+        if (this.getCurrentUser() != null) {
+
+            if (this.getCurrentUser().getPhotoUrl() != null) {
+                Glide.with(this)
+                        .load(this.getCurrentUser().getPhotoUrl())
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(avatar);
+            }
+
+            String email = TextUtils.isEmpty(this.getCurrentUser().getEmail()) ? getString(R.string.info_no_email_found) : this.getCurrentUser().getEmail();
+            email2.setText(email);
+
+            // 7 - Get additional data from Firestore ( Username)
+           user.setText(this.getCurrentUser().getDisplayName());
+        }
     }
 
 }
