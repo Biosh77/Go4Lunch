@@ -20,14 +20,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
     // FOR DATA
 
     private List<Result> restaurants;
-    private android.location.Location mLocation;
+
 
 
     //CONSTRUCTOR
 
-    public ListAdapter(List<Result> restaurants,android.location.Location location){
+    public ListAdapter(List<Result> restaurants){
     this.restaurants = restaurants;
-    this.mLocation = location;
+
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-        holder.updateWithData(this.restaurants.get(position),this.mLocation);
+        holder.updateWithData(this.restaurants.get(position));
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -88,7 +89,7 @@ public class MainActivity extends BaseActivity {
             String username = this.getCurrentUser().getDisplayName();
             String uid = this.getCurrentUser().getUid();
 
-            UserDataRepository.createUser(uid, username, urlPicture).addOnFailureListener(this.onFailureListener());
+            UserDataRepository.createUser(uid, username, urlPicture).addOnSuccessListener(aVoid -> Log.d(TAG, "onSuccess: "));
         }
     }
 
@@ -112,13 +113,11 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onCancel() {
                     Log.d(TAG, "facebook:onCancel");
-                    // ...
                 }
 
                 @Override
                 public void onError(FacebookException error) {
                     Log.d(TAG, "facebook:onError", error);
-                    // ...
                 }
             });
 
@@ -139,19 +138,25 @@ public class MainActivity extends BaseActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            Intent intent = new Intent(MainActivity.this, AccueilActivity.class);
-                            startActivity(intent);
-                            finish();
+                            signInStartActivity();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
+    }
+
+    private void signInStartActivity(){
+
+        createUserInFirestore();
+
+        Intent intent = new Intent(MainActivity.this, AccueilActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     //------
@@ -189,7 +194,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        this.handleResponseAfterSignIn(requestCode, resultCode, data);
+
 
         if (requestCode == GOOGLE_SIGN) {
             Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -202,7 +207,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Toast.makeText(getApplicationContext(), "You are connected", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getApplicationContext(), AccueilActivity.class));
+                        signInStartActivity();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -216,18 +221,6 @@ public class MainActivity extends BaseActivity {
         } else {
             // Pass the activity result back to the Facebook SDK
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
-        //IdpResponse response = IdpResponse.fromResultIntent(data);
-        if (requestCode == GOOGLE_SIGN) {
-            if (resultCode == RESULT_OK) {
-                this.createUserInFirestore();
-            } //else {
-            //if (response == null){
-
-            //  }
         }
     }
 }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="250dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/eatnav"
     android:gravity="center"
     android:orientation="vertical">
@@ -27,12 +28,10 @@
 
         <ImageView
             android:id="@+id/avatar_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:padding="40dp" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+             />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,8 +47,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 tools:text="John SMITH"
+                android:textStyle="bold"
                 android:layout_marginLeft="10dp" />
 
             <TextView
@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="12sp"
                 tools:text="blbla@blabla.com" />
 
 

@@ -45,7 +45,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void updateWithData(Result results, android.location.Location mLocation) {
+    public void updateWithData(Result results) {
         RequestManager glide = Glide.with(itemView);
 
 
@@ -53,7 +53,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         this.textViewName.setText(results.getName());
 
         //Photo
-        // this.imageViewPhoto...
+         //this.imageViewPhoto
         //results.getPhotos();
 
 

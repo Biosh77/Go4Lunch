@@ -38,23 +38,6 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
 
-    // @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    // @Override
-    // protected void onCreate(Bundle savedInstanceState) {
-    //    super.onCreate(savedInstanceState);
-    //   setContentView(R.layout.activity_accueil);
-
-    //   mAuth = FirebaseAuth.getInstance();
-
-
-    //   this.configureToolBar();
-
-    //  this.configureDrawerLayout();
-
-    //  this.configureNavigationView();
-
-    //  this.OnBottomNavigation();
-    //  }
 
     @BindView(R.id.accueil_nav_view)
     NavigationView accueilNavView;
