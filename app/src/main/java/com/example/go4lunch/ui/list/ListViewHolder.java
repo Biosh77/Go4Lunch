@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 
 public class ListViewHolder extends RecyclerView.ViewHolder {
 
+
     @BindView(R.id.name)
     TextView textViewName;
     @BindView(R.id.address)
@@ -28,8 +29,6 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     TextView textViewOpening;
     @BindView(R.id.distance)
     TextView textViewDistance;
-    @BindView(R.id.ic_user)
-    ImageView imageViewUser;
     @BindView(R.id.number_users)
     TextView textViewNumber;
     @BindView(R.id.item_ratingBar)
@@ -53,11 +52,21 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         this.textViewName.setText(results.getName());
 
         //Photo
-         //this.imageViewPhoto
-        //results.getPhotos();
+        glide.load("https://maps.googleapis.com/maps/api/place/photo" +
+                "?maxwidth=80" +
+                "&maxheight=80" +
+                "&photoreference=" + results.getPhotos().get(0).getPhotoReference() +
+                "&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw").into(imageViewPhoto);
 
+        //Address
+        this.textViewAddress.setText(results.getVicinity());
 
+        //Opening Hours
+        if (results.getOpeningHours() != null) {
 
+        } else { results.getOpeningHours().getOpenNow();
+
+        }
 
     }
 

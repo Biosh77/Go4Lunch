@@ -9,6 +9,8 @@ public class Workmate {
     @Nullable
     private String urlPicture;
 
+    public Workmate() {
+    }
 
     public Workmate(String uid, String username, String urlPicture) {
         this.uid = uid;

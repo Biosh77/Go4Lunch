@@ -39,6 +39,7 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     private FirebaseAuth mAuth;
 
 
+
     @BindView(R.id.accueil_nav_view)
     NavigationView accueilNavView;
 

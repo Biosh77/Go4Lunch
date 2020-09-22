@@ -13,23 +13,24 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.go4lunch.R;
+import com.example.go4lunch.ViewModel;
+import com.example.go4lunch.injection.Injection;
 
 public class WorkmatesFragment extends Fragment {
 
-    private WorkmatesViewModel workmatesViewModel;
+    private ViewModel workmatesViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         workmatesViewModel =
-                ViewModelProviders.of(this).get(WorkmatesViewModel.class);
+                ViewModelProviders.of(this, Injection.provideViewModelFactory()).get(ViewModel.class);
         View root = inflater.inflate(R.layout.fragment_workmates, container, false);
-        final TextView textView = root.findViewById(R.id.workmates_recycler);
-        workmatesViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+        //workmatesViewModel.getUser.observe(getViewLifecycleOwner(), new Observer<String>() {
+           // @Override
+           // public void onChanged(@Nullable String s) {
+
+          //  }
+       // });
         return root;
     }
 }

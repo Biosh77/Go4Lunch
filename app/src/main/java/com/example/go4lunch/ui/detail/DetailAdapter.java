@@ -1,4 +1,4 @@
-package com.example.go4lunch.ui.workmates;
+package com.example.go4lunch.ui.detail;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,31 +10,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.models.Workmate;
+import com.example.go4lunch.ui.workmates.WorkmatesViewHolder;
 
 import java.util.List;
 
-public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesViewHolder> {
+public class DetailAdapter extends RecyclerView.Adapter<DetailViewHolder> {
 
-    // FOR DATA
+    //DATA
 
     List<Workmate> workmates;
 
-    // CONSTRUCTOR
+    //CONSTRUCTOR
 
-    public WorkmatesAdapter(List<Workmate> workmates) {
-        this.workmates = workmates;
+    public DetailAdapter (List<Workmate> workmates){
+        this.workmates=workmates;
     }
 
+
+    @NonNull
     @Override
-    public WorkmatesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DetailViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.fragment_workmates_item,parent,false);
-        return new WorkmatesViewHolder(view);
+        View view = inflater.inflate(R.layout.detail_recycler,parent,false);
+        return new DetailViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WorkmatesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DetailViewHolder holder, int position) {
         holder.updateWithData(this.workmates.get(position));
     }
 

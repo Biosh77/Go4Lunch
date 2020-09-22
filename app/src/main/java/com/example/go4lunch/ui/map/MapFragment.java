@@ -22,11 +22,8 @@ import android.view.ViewGroup;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
-import com.example.go4lunch.googlemapsretrofit.RetrofitMaps;
-import com.example.go4lunch.googlemapsretrofit.pojo.Example;
 import com.example.go4lunch.googlemapsretrofit.pojo.Result;
 import com.example.go4lunch.injection.Injection;
-import com.example.go4lunch.injection.ViewModelFactory;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -40,10 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+
 
 
 public class MapFragment extends Fragment implements LocationListener {
@@ -54,7 +48,7 @@ public class MapFragment extends Fragment implements LocationListener {
     private android.location.Location onlyOneLocation;
     private LocationManager locationManager;
     private final int REQUEST_FINE_LOCATION = 1234;
-    private int PROXIMITY_RADIUS = 15000;
+
 
     private ViewModel RestaurantViewModel;
 
@@ -67,10 +61,7 @@ public class MapFragment extends Fragment implements LocationListener {
 
         mMapView.onResume(); // needed to get the map to display immediately
 
-
-
         mapsInitializer();
-
 
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -106,8 +97,6 @@ public class MapFragment extends Fragment implements LocationListener {
         }
 
     }
-
-
 
 
     @Override

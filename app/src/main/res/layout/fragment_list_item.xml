@@ -46,11 +46,13 @@
         <RelativeLayout
             android:id="@+id/tab2"
             android:layout_width="0dp"
+            android:layout_marginTop="5dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
             <TextView
                 android:id="@+id/distance"
+                android:layout_marginLeft="13dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="120 m" />
@@ -63,7 +65,7 @@
                 android:layout_above="@+id/item_ratingBar"
                 android:layout_toLeftOf="@+id/number_users"
                 android:src="@drawable/ic_user_foreground"
-                android:visibility="invisible" />
+                />
 
             <TextView
                 android:id="@+id/number_users"
@@ -89,6 +91,7 @@
             android:id="@+id/tab3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:layout_weight="1">
 
             <ImageView

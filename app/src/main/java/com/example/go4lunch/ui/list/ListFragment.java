@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
+import com.example.go4lunch.googlemapsretrofit.pojo.Location;
 import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.injection.Injection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +38,6 @@ public class ListFragment extends Fragment {
     // FOR DATA
 
     private ListAdapter adapter;
-    private List<Result> mRestaurants;
 
 
     private ViewModel mViewModel;
@@ -46,27 +48,24 @@ public class ListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_list_item, container, false);
-        ButterKnife.bind(this, view);
-
-        this.configureRecyclerView();
-
-        return view;
+        mViewModel =
+                ViewModelProviders.of(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_list_item, container, false);
+        //mViewModel.init(Location);
+        mViewModel.getRestaurant().observe(this, new Observer<List<Result>>()  {
+            @Override
+            public void onChanged(List<Result> results) {
+                configureRecyclerView(results);
+            }
+        });
+        return root;
     }
 
 
-    private void configureRecyclerView(){
-        this.mRestaurants = new ArrayList<>();
-        this.adapter = new ListAdapter(this.mRestaurants);
+
+    private void configureRecyclerView(List<Result> results){
+        this.adapter = new ListAdapter(results);
         this.recyclerView.setAdapter(adapter);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
-
-
-    // RETROFIT CALL ?  NON MAIS JE SAIS PAS ETC
-
-
-
-    // UI
-
 }

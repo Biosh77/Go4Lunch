@@ -8,11 +8,13 @@ import com.example.go4lunch.googlemapsretrofit.pojo.Result;
 import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
 
+
 import java.util.List;
 
 public class ViewModel extends androidx.lifecycle.ViewModel {
 
     LiveData<List<Result>> restaurants;
+
     RestaurantDataRepository restaurantDataRepository;
     UserDataRepository userDataRepository;
 
@@ -28,5 +30,8 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public LiveData<List<Result>> getRestaurant() {
         return restaurants;
     }
+
+
+
 
 }
