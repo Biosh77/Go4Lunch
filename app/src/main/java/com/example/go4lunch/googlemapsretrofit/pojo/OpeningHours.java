@@ -3,8 +3,10 @@ package com.example.go4lunch.googlemapsretrofit.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 
-public class OpeningHours {
+
+public class OpeningHours implements Serializable {
 
     @SerializedName("open_now")
     @Expose

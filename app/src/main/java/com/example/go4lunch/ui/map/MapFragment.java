@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 
@@ -128,7 +129,8 @@ public class MapFragment extends Fragment implements LocationListener {
         onlyOneLocation = location;
         locationManager.removeUpdates(this);
 
-        RestaurantViewModel = ViewModelProviders.of(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        if (!isDetached()) {
+        RestaurantViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
         RestaurantViewModel.init(onlyOneLocation);
         RestaurantViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
                     @Override
@@ -162,6 +164,7 @@ public class MapFragment extends Fragment implements LocationListener {
                     }
                 }
         );
+        }
     }
 
 

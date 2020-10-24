@@ -3,6 +3,7 @@ package com.example.go4lunch.googlemapsretrofit.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Example {
+public class Example implements Serializable {
 
     @SerializedName("html_attributions")
     @Expose

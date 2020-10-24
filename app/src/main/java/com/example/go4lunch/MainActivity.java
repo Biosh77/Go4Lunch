@@ -2,12 +2,16 @@ package com.example.go4lunch;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+
 
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.base.BaseActivity;
@@ -18,7 +22,6 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-//import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,7 +30,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -58,6 +60,9 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.login__fb_button)
     LoginButton btn_fb_login;
 
+    @BindView(R.id.lunch)
+    ImageView image_lunch;
+
     @Override
     public int getLayout() {
         return R.layout.activity_main;
@@ -69,8 +74,6 @@ public class MainActivity extends BaseActivity {
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Access a Cloud Firestore instance from your Activity
-        //FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         FbSignIn();
         GoogleSignIn();
@@ -150,7 +153,7 @@ public class MainActivity extends BaseActivity {
                 });
     }
 
-    private void signInStartActivity(){
+    private void signInStartActivity() {
 
         createUserInFirestore();
 
@@ -223,6 +226,7 @@ public class MainActivity extends BaseActivity {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+
 }
 
 

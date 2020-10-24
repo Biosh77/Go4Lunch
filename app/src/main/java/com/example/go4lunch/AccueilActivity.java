@@ -1,6 +1,7 @@
 package com.example.go4lunch;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.base.BaseActivity;
+import com.example.go4lunch.ui.drawer.LunchActivity;
+import com.example.go4lunch.ui.drawer.SettingsActivity;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -17,7 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
@@ -29,6 +32,7 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.appcompat.widget.Toolbar;
 
 import butterknife.BindView;
+
 
 public class AccueilActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -90,10 +94,10 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
         switch (id) {
             case R.id.accueil_drawer_yourlunch:
-                Toast.makeText(this, "LUNCH", Toast.LENGTH_SHORT).show();
+                lunch();
                 break;
             case R.id.accueil_drawer_settings:
-                Toast.makeText(this, "SETTINGS", Toast.LENGTH_SHORT).show();
+                settings();
                 break;
             case R.id.accueil_drawer_logout:
                 logOut();
@@ -101,6 +105,18 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
         }
         this.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+
+    private void lunch(){
+        Intent lunchIntent = new Intent(this, LunchActivity.class);
+        startActivity(lunchIntent);
+    }
+
+    private void settings(){
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        startActivity(settingsIntent);
     }
 
     private void logOut() {

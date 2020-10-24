@@ -3,7 +3,9 @@ package com.example.go4lunch.googlemapsretrofit.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Geometry {
+import java.io.Serializable;
+
+public class Geometry implements Serializable {
 
     @SerializedName("location")
     @Expose

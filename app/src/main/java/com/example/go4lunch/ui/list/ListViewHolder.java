@@ -1,6 +1,6 @@
 package com.example.go4lunch.ui.list;
 
-import android.content.Context;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.R;
+import com.example.go4lunch.googlemapsretrofit.pojo.Location;
 import com.example.go4lunch.googlemapsretrofit.pojo.Result;
 
 
@@ -36,6 +38,12 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.photo)
     ImageView imageViewPhoto;
 
+    public static final double MAX_STAR = 3;
+    public static final double MAX_RATING = 5;
+    private float[] distanceResults = new float[3];
+    private android.location.Location onlyOneLocation;
+
+
 
     // FOR DATA
 
@@ -49,25 +57,66 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
 
         // Nom
+
         this.textViewName.setText(results.getName());
 
         //Photo
-        glide.load("https://maps.googleapis.com/maps/api/place/photo" +
-                "?maxwidth=80" +
-                "&maxheight=80" +
-                "&photoreference=" + results.getPhotos().get(0).getPhotoReference() +
-                "&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw").into(imageViewPhoto);
+
+        if (!(results.getPhotos() == null)) {
+            if (!(results.getPhotos().isEmpty())) {
+                glide.load("https://maps.googleapis.com/maps/api/place/photo" +
+                        "?maxwidth=80" +
+                        "&maxheight=80" +
+                        "&photoreference=" + results.getPhotos().get(0).getPhotoReference() +
+                        "&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw").into(imageViewPhoto);
+            }
+        } else {
+            glide.load(R.drawable.ic_no_image_available).apply(RequestOptions.centerCropTransform()).into(imageViewPhoto);
+        }
 
         //Address
+
         this.textViewAddress.setText(results.getVicinity());
 
         //Opening Hours
+
         if (results.getOpeningHours() != null) {
-
-        } else { results.getOpeningHours().getOpenNow();
-
+            if (results.getOpeningHours().getOpenNow()) {
+                textViewOpening.setText("Open now");
+            } else {
+                textViewOpening.setText("Close");
+            }
+        } else {
+            textViewOpening.setText(itemView.getContext().getString(R.string.time_unavailable));
         }
 
+
+
+        //Distance
+
+
+
+     
+
+
+        //Users
+
+
+
+
+
+        //Rating
+
+        if (results.getRating() != null){
+            double googleRating = results.getRating();
+            double rating = googleRating / MAX_RATING * MAX_STAR;
+            this.ratingBar.setRating((float)rating);
+            this.ratingBar.setVisibility(View.VISIBLE);
+        }
+
+
     }
+
+
 
 }

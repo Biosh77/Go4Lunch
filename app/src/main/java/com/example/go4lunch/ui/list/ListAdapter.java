@@ -2,6 +2,7 @@ package com.example.go4lunch.ui.list;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.ui.detail.DetailActivity;
 
 
 import java.util.List;
@@ -20,13 +22,18 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
     // FOR DATA
 
     private List<Result> restaurants;
-
+    Context context;
+    OnRestaurantClickListener listener;
+    interface OnRestaurantClickListener{
+        void onRestaurantClick(Result result);
+    }
 
 
     //CONSTRUCTOR
 
-    public ListAdapter(List<Result> restaurants){
+    public ListAdapter(List<Result> restaurants,OnRestaurantClickListener listener ){
     this.restaurants = restaurants;
+    this.listener = listener;
 
     }
 
@@ -41,7 +48,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
+
         holder.updateWithData(this.restaurants.get(position));
+
+        holder.itemView.setOnClickListener(v -> {
+           Result result = restaurants.get(position);
+           listener.onRestaurantClick(result);
+       });
     }
 
     @Override

@@ -52,6 +52,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.drawer.LunchActivity"/>
+
+        <activity android:name=".ui.drawer.SettingsActivity"/>
+
+        <activity android:name=".ui.detail.DetailActivity"/>
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

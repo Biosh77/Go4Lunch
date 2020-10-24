@@ -20,5 +20,7 @@
     </style>
 
 
+    <string name="list_unit_distance">%1$sm</string>
+
 
 </resources>

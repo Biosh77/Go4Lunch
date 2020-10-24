@@ -28,8 +28,13 @@
     <string name="info_no_username_found">Pas de nom d\'utilisateur</string>
     <string name="info_no_email_found">Pas d\'email</string>
 
+    <!-- Restaurant -->
 
-    <!-- ACCUEIL ACTIVITY -->
+    <string name="time_unavailable">No time</string>
+
+    <!-- Others -->
+
+
 
 
 

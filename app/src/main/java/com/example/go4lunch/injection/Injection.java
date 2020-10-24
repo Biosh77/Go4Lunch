@@ -11,9 +11,6 @@ import java.util.List;
 
 public class Injection {
 
-    private static int PROXIMITY_RADIUS = 1500;
-
-
 
     public static RestaurantDataRepository provideRestaurantDataSource () {
         return new RestaurantDataRepository();

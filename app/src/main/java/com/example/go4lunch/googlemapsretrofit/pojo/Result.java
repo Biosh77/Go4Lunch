@@ -36,6 +36,9 @@ public class Result {
     @SerializedName("vicinity")
     @Expose
     private String vicinity;
+    @SerializedName("rating")
+    @Expose
+    private Double rating;
 
     public Geometry getGeometry() {
         return geometry;
@@ -71,6 +74,13 @@ public class Result {
 
     public OpeningHours getOpeningHours() {
         return openingHours;
+    }
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 
     public void setOpeningHours(OpeningHours openingHours) {

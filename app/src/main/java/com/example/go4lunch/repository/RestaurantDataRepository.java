@@ -18,7 +18,7 @@ import retrofit.Retrofit;
 
 public class RestaurantDataRepository {
 
-    private int PROXIMITY_RADIUS = 2500;
+    private int PROXIMITY_RADIUS = 5000;
 
     public MutableLiveData<List<Result>> getRestaurants(android.location.Location location) {
 

@@ -4,13 +4,19 @@
 
     <item
         android:id="@+id/accueil_drawer_yourlunch"
+        android:textColor="@color/white"
+        android:icon="@drawable/ic_lunch_foreground"
         android:title="@string/LUNCH" />
 
     <item
         android:id="@+id/accueil_drawer_settings"
+        android:textColor="@color/white"
+        android:icon="@drawable/ic_settings_foreground"
         android:title="@string/SETTINGS" />
     <item
         android:id="@+id/accueil_drawer_logout"
+        android:textColor="@color/white"
+        android:icon="@drawable/ic_logout_foreground"
         android:title="@string/LogOut" />
 
 </menu>
