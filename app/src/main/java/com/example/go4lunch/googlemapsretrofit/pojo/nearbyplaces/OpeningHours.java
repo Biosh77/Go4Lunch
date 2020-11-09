@@ -1,4 +1,4 @@
-package com.example.go4lunch.googlemapsretrofit.pojo;
+package com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

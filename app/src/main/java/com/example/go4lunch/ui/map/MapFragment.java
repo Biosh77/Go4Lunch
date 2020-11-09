@@ -1,13 +1,11 @@
 package com.example.go4lunch.ui.map;
 
 
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 
 import android.Manifest;
@@ -23,7 +21,7 @@ import android.view.ViewGroup;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
-import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

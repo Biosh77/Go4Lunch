@@ -21,13 +21,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
-import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.ui.detail.DetailActivity;
 import com.google.gson.Gson;
@@ -85,7 +84,7 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
 
 
     private void configureRecyclerView(List<Result> results) {
-        this.adapter = new ListAdapter(results,this);
+        this.adapter = new ListAdapter(results,this,onlyOneLocation);
         this.recyclerView.setAdapter(adapter);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
@@ -151,9 +150,6 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
         Gson gson = new Gson();
          Intent intent = new Intent(getContext(), DetailActivity.class);
         intent.putExtra("obj", gson.toJson(result));
-         //intent.putExtra("name",result.getName());
-         //intent.putExtra("address",result.getVicinity());
-         //intent.putExtra("rating", result.getRating());
          startActivity(intent);
     }
 }

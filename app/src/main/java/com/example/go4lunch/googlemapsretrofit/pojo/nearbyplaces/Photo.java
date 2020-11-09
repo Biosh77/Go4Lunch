@@ -1,4 +1,4 @@
-package com.example.go4lunch.googlemapsretrofit.pojo;
+package com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces;
 
 import java.io.Serializable;
 import java.util.List;

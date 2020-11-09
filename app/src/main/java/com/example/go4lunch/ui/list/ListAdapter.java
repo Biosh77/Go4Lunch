@@ -2,7 +2,7 @@ package com.example.go4lunch.ui.list;
 
 
 import android.content.Context;
-import android.content.Intent;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +11,24 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.R;
-import com.example.go4lunch.googlemapsretrofit.pojo.Result;
-import com.example.go4lunch.ui.detail.DetailActivity;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 
 
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
+
     // FOR DATA
+
+
 
     private List<Result> restaurants;
     Context context;
     OnRestaurantClickListener listener;
+    private Location mLocation;
+
+
     interface OnRestaurantClickListener{
         void onRestaurantClick(Result result);
     }
@@ -31,9 +36,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     //CONSTRUCTOR
 
-    public ListAdapter(List<Result> restaurants,OnRestaurantClickListener listener ){
+    public ListAdapter(List<Result> restaurants,OnRestaurantClickListener listener,Location mLocation ){
     this.restaurants = restaurants;
     this.listener = listener;
+    this.mLocation = mLocation;
 
     }
 
@@ -49,7 +55,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
 
-        holder.updateWithData(this.restaurants.get(position));
+        holder.updateWithData(this.restaurants.get(position),mLocation);
 
         holder.itemView.setOnClickListener(v -> {
            Result result = restaurants.get(position);

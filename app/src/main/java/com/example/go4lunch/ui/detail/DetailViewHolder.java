@@ -2,7 +2,6 @@ package com.example.go4lunch.ui.detail;
 
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +10,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.R;
-import com.example.go4lunch.googlemapsretrofit.pojo.Result;
 import com.example.go4lunch.models.Workmate;
 
 import butterknife.BindView;

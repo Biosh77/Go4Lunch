@@ -13,8 +13,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.R;
-import com.example.go4lunch.googlemapsretrofit.pojo.Location;
-import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Location;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 
 
 import butterknife.BindView;
@@ -41,7 +41,6 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     public static final double MAX_STAR = 3;
     public static final double MAX_RATING = 5;
     private float[] distanceResults = new float[3];
-    private android.location.Location onlyOneLocation;
 
 
 
@@ -52,7 +51,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void updateWithData(Result results) {
+    public void updateWithData(Result results, android.location.Location mLocation) {
         RequestManager glide = Glide.with(itemView);
 
 
@@ -91,12 +90,12 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         }
 
 
-
         //Distance
 
 
-
-     
+        displayDistance(mLocation, results.getGeometry().getLocation());
+        String distance = Integer.toString(Math.round(distanceResults[0]));
+        this.textViewDistance.setText(itemView.getResources().getString(R.string.list_unit_distance, distance));
 
 
         //Users
@@ -104,19 +103,30 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
 
 
-
         //Rating
 
-        if (results.getRating() != null){
+        if (results.getRating() != null) {
             double googleRating = results.getRating();
             double rating = googleRating / MAX_RATING * MAX_STAR;
-            this.ratingBar.setRating((float)rating);
+            this.ratingBar.setRating((float) rating);
             this.ratingBar.setVisibility(View.VISIBLE);
         }
 
 
     }
 
+    private void displayDistance(android.location.Location startLocation, Location endLocation) {
+        double startLatitude = startLocation.getLatitude();
+        double startLongitude = startLocation.getLongitude();
+        double endLatitude = endLocation.getLat();
+        double endLongitude = endLocation.getLng();
+        android.location.Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, distanceResults);
 
 
+    }
 }
+
+
+
+
+

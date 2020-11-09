@@ -6,8 +6,9 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.go4lunch.googlemapsretrofit.RetrofitMaps;
-import com.example.go4lunch.googlemapsretrofit.pojo.Example;
-import com.example.go4lunch.googlemapsretrofit.pojo.Result;
+import com.example.go4lunch.googlemapsretrofit.pojo.details.Details;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Example;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 
 import java.util.List;
 
@@ -46,5 +47,31 @@ public class RestaurantDataRepository {
         });
         return results;
     }
+
+
+
+    public MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> getDetailsRestaurant(String placeId){
+
+        MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> results = new MutableLiveData<>();
+
+        RetrofitMaps details = RetrofitMaps.retrofit.create(RetrofitMaps.class);
+
+        Call<Details> call = details.getDetails(placeId);
+
+        call.enqueue(new Callback<Details>() {
+            @Override
+            public void onResponse(Response<Details> response, Retrofit retrofit) {
+                results.setValue(response.body().getResult());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {Log.d("TAG", "onFailure: " + t.getMessage()); }
+        });
+
+        return results;
+    }
+
+
+  
 
 }

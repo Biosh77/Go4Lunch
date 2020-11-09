@@ -1,24 +1,17 @@
-package com.example.go4lunch.googlemapsretrofit.pojo;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+package com.example.go4lunch.googlemapsretrofit.pojo.details;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Example implements Serializable {
+public class Details {
 
     @SerializedName("html_attributions")
     @Expose
     private List<Object> htmlAttributions = null;
-    @SerializedName("results")
+    @SerializedName("result")
     @Expose
-    private List<Result> results = null;
+    private Result result;
     @SerializedName("status")
     @Expose
     private String status;
@@ -31,12 +24,12 @@ public class Example implements Serializable {
         this.htmlAttributions = htmlAttributions;
     }
 
-    public List<Result> getResults() {
-        return results;
+    public Result getResult() {
+        return result;
     }
 
-    public void setResults(List<Result> results) {
-        this.results = results;
+    public void setResult(Result result) {
+        this.result = result;
     }
 
     public String getStatus() {
