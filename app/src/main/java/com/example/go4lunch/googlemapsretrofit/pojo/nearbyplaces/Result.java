@@ -2,9 +2,7 @@ package com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces;
 
 import java.util.List;
 
-import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Geometry;
-import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.OpeningHours;
-import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Photo;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

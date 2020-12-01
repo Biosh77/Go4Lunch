@@ -1,6 +1,7 @@
 package com.example.go4lunch.ui.list;
 
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -15,8 +16,15 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.R;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Location;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
+import com.example.go4lunch.repository.UserDataRepository;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
+import java.util.Objects;
+
+import bolts.Task;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -98,8 +106,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         this.textViewDistance.setText(itemView.getResources().getString(R.string.list_unit_distance, distance));
 
 
-        //Users
-
+        //Users- boucle recup workmates
 
 
 

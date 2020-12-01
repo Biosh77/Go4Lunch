@@ -37,6 +37,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 
 import java.util.Arrays;
@@ -226,6 +227,8 @@ public class MainActivity extends BaseActivity {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+
 
 }
 

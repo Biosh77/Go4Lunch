@@ -28,6 +28,7 @@ import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
+import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.ui.detail.DetailActivity;
 import com.google.gson.Gson;
 
@@ -46,6 +47,7 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
     private final int REQUEST_FINE_LOCATION = 1234;
 
 
+
     // FOR DESIGN
 
     @BindView(R.id.list_recycler)
@@ -54,9 +56,8 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
     // FOR DATA
 
     private ListAdapter adapter;
-
-
     private ViewModel mViewModel;
+    private List<Workmate> numberOfWorkmates;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,7 +65,6 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
 
         mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
         View root = inflater.inflate(R.layout.fragment_list, container, false);
-
 
 
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
@@ -89,7 +89,7 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
         this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
-
+    
     @Override
     public void onLocationChanged(android.location.Location location) {
         onlyOneLocation = location;

@@ -1,7 +1,10 @@
 package com.example.go4lunch.ui.detail;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -9,7 +12,10 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,11 +30,18 @@ import com.example.go4lunch.base.BaseActivity;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
+import com.example.go4lunch.repository.UserDataRepository;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.User;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -63,8 +76,15 @@ public class DetailActivity extends BaseActivity {
     private DetailAdapter mDetailAdapter;
     private List<Workmate> mWorkmates;
     private ViewModel detailViewModel;
+
+
+
+    private Result result;
+
     private String website;
     private String phone;
+    private String choice;
+    boolean liked = false;
 
 
 
@@ -75,6 +95,12 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void onConfigureDesign() {
+
+
+
+
+
+
 
         updateUi();
         configureRecyclerView();
@@ -89,16 +115,21 @@ public class DetailActivity extends BaseActivity {
     }
 
 
+
+
+
+
+
     private void updateUi() {
         RequestManager glide = Glide.with(recyclerView);
 
         Gson gson = new Gson();
         String strObj = getIntent().getStringExtra("obj");
-        Result obj = gson.fromJson(strObj, Result.class);
+        result = gson.fromJson(strObj, Result.class);
 
 
         detailViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
-        detailViewModel.init(obj.getPlaceId());
+        detailViewModel.init(result.getPlaceId());
         detailViewModel.getDetails().observe(this, new Observer<com.example.go4lunch.googlemapsretrofit.pojo.details.Result>() {
             @Override
             public void onChanged(com.example.go4lunch.googlemapsretrofit.pojo.details.Result details) {
@@ -109,19 +140,19 @@ public class DetailActivity extends BaseActivity {
             }
         });
 
-        restaurant_name.setText(obj.getName());
-        restaurant_address.setText(obj.getVicinity());
+        restaurant_name.setText(result.getName());
+        restaurant_address.setText(result.getVicinity());
 
 
 
         // Image
 
-        if (!(obj.getPhotos() == null)) {
-            if (!(obj.getPhotos().isEmpty())) {
+        if (!(result.getPhotos() == null)) {
+            if (!(result.getPhotos().isEmpty())) {
                 glide.load("https://maps.googleapis.com/maps/api/place/photo" +
                         "?maxwidth=400" +
                         "&maxheight=400" +
-                        "&photoreference=" + obj.getPhotos().get(0).getPhotoReference() +
+                        "&photoreference=" + result.getPhotos().get(0).getPhotoReference() +
                         "&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw").into(restaurant_picture);
             }
         } else {
@@ -130,8 +161,8 @@ public class DetailActivity extends BaseActivity {
 
         // Rating
 
-        if (obj.getRating() != null) {
-            double googleRating = obj.getRating();
+        if (result.getRating() != null) {
+            double googleRating = result.getRating();
             double rating = googleRating / MAX_RATING * MAX_STAR;
             this.restaurant_rating.setRating((float) rating);
             this.restaurant_rating.setVisibility(View.VISIBLE);
@@ -177,39 +208,45 @@ public class DetailActivity extends BaseActivity {
 
     @OnClick(R.id.like)
     public void onClickLike(View v) {
-        if(v.getId() == R.id.like){
-            if (getResources().getString(R.string.Like).equals(like_button.getText())){
+        if(!liked){
                 this.likeRestaurant();
             }else {
                 this.dislikeRestaurant();
             }
         }
-    }
+
 
     private void likeRestaurant() {
+        Toast.makeText(this, "Liked", Toast.LENGTH_SHORT).show();
+
+
     }
 
     private void dislikeRestaurant() {
+
     }
 
     // Choice
 
     @OnClick(R.id.choice_button)
-    public void onClickChoice(View v){
-        if (v.getId() == R.id.choice_button){
-
-        }else {
+    public void onClickChoice(){
+        if (!liked){
+            interestedBy();
+        }else if (liked){
             notInterestedBy();
         }
     }
 
     public void interestedBy(){
-
+        liked = true;
+        //detailViewModel.updateChoice(UserDataRepository.getCurrentUser().getUid(), result.getName());
+        choice_button.setImageDrawable(getResources().getDrawable(R.drawable.validate));
     }
 
     public void notInterestedBy(){
-
+        liked = false;
+        choice_button.setImageDrawable(getResources().getDrawable(R.drawable.before_validate));
+        //detailViewModel.updateChoice(UserDataRepository.getCurrentUser().getUid(), "");
     }
-
 }
 

@@ -49,5 +49,9 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
 
     public LiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> getDetails(){return details;}
 
+    public void updateLikes(String uid, List<String> likes){userDataRepository.updateLikes(uid,likes);}
+
+    public void updateChoice(String uid, String interestedBy) {userDataRepository.updateChoice(uid,interestedBy);}
+
 
 }

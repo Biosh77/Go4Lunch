@@ -32,7 +32,7 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
     public void updateWithData(Workmate workmate){
         RequestManager glide = Glide.with(itemView);
 
@@ -50,13 +50,13 @@ public class WorkmatesViewHolder extends RecyclerView.ViewHolder {
         if (workmate.getInterestedBy() != null) {
             name.setText(itemView.getContext().getString(R.string.is_eating_at, workmate.getUsername(), workmate.getInterestedBy()));
             name.setTypeface(name.getTypeface(), Typeface.NORMAL);
-            name.setTextColor(itemView.getContext().getColor(R.color.colorBlack));
+            name.setTextColor(itemView.getResources().getColor(R.color.colorBlack));
             name.setAlpha((float) 1);
 
         } else {
             name.setText(itemView.getContext().getString(R.string.has_not_decided_yet,workmate.getUsername()));
             name.setTypeface(name.getTypeface(), Typeface.ITALIC);
-            name.setTextColor(itemView.getContext().getColor(R.color.colorGray));
+            name.setTextColor(itemView.getResources().getColor(R.color.colorGray));
             name.setAlpha((float) 0.5);
         }
     }
