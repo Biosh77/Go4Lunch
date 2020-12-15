@@ -113,9 +113,6 @@ public class UserDataRepository {
     }
 
 
-
-    //public static LiveData<Workmate> getUser(String uid){
-        //return UserDataRepository.getUserCollection().document(uid).get();
-    //}
+    public static FirebaseUser getCurrentUser(){return FirebaseAuth.getInstance().getCurrentUser();}
 
 }

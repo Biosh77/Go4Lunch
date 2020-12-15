@@ -2,9 +2,10 @@ package com.example.go4lunch.models;
 
 import androidx.annotation.Nullable;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Workmate {
+public class Workmate implements Serializable {
 
     private String uid;
     private String username;

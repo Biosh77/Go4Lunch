@@ -27,6 +27,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
     Context context;
     OnRestaurantClickListener listener;
     private Location mLocation;
+    
 
 
     interface OnRestaurantClickListener{

@@ -49,6 +49,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
     public static final double MAX_STAR = 3;
     public static final double MAX_RATING = 5;
     private float[] distanceResults = new float[3];
+    private int users;
 
 
 
@@ -107,6 +108,32 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
 
         //Users- boucle recup workmates
+
+        users = 0;
+        UserDataRepository.getUserCollection()
+                .whereEqualTo("interestedBy", results.getName())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                users++;
+                            }
+                            if (users > 0) {
+                                textViewNumber.setVisibility(View.VISIBLE);
+                                String numberOfUsers = "(" + users + ")";
+                                textViewNumber.setText(numberOfUsers);
+                            } else {
+                                textViewNumber.setText("(0)");
+                            }
+                        } else {
+                            Log.d("manager", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
 
 
 

@@ -1,8 +1,6 @@
 package com.example.go4lunch.ui.detail;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -13,9 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,16 +28,18 @@ import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.User;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -51,6 +49,7 @@ import static com.example.go4lunch.ui.list.ListViewHolder.MAX_STAR;
 
 public class DetailActivity extends BaseActivity {
 
+    private static final String TAG = "Blabla";
     @BindView(R.id.activity_restaurant_picture)
     ImageView restaurant_picture;
     @BindView(R.id.activity_restaurant_name)
@@ -78,14 +77,13 @@ public class DetailActivity extends BaseActivity {
     private ViewModel detailViewModel;
 
 
-
     private Result result;
+    private Workmate workmate;
 
     private String website;
     private String phone;
     private String choice;
     boolean liked = false;
-
 
 
     @Override
@@ -96,157 +94,173 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onConfigureDesign() {
 
-
-
-
-
-
-
         updateUi();
-        configureRecyclerView();
+        getWorkmateChoice();
     }
 
 
-    private void configureRecyclerView() {
+    private void configureRecyclerView(List<Workmate> workmates) {
         this.mWorkmates = new ArrayList<>();
-        this.mDetailAdapter = new DetailAdapter(this.mWorkmates);
+        this.mDetailAdapter = new DetailAdapter(workmates);
         this.recyclerView.setAdapter(this.mDetailAdapter);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
 
-
-
-
-
-
-    private void updateUi() {
-        RequestManager glide = Glide.with(recyclerView);
-
-        Gson gson = new Gson();
-        String strObj = getIntent().getStringExtra("obj");
-        result = gson.fromJson(strObj, Result.class);
-
-
-        detailViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
-        detailViewModel.init(result.getPlaceId());
-        detailViewModel.getDetails().observe(this, new Observer<com.example.go4lunch.googlemapsretrofit.pojo.details.Result>() {
+    private void getWorkmateChoice() {
+        UserDataRepository.getUserCollection().whereEqualTo("interestedBy", result.getName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onChanged(com.example.go4lunch.googlemapsretrofit.pojo.details.Result details) {
-
-                website = details.getWebsite();
-                phone = details.getFormattedPhoneNumber();
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<Workmate> workmates = new ArrayList<>();
+                    for (DocumentSnapshot document : task.getResult()) {
+                        Log.d("TAG", document.getId() + " => " + document.getData());
+                        workmates.add(document.toObject(Workmate.class));
+                    }
+                    configureRecyclerView(workmates);
+                } else {
+                    Log.d("TAG", "Error getting documents: ", task.getException());
+                }
 
             }
+
         });
-
-        restaurant_name.setText(result.getName());
-        restaurant_address.setText(result.getVicinity());
+    }
 
 
+        private void updateUi() {
+            RequestManager glide = Glide.with(recyclerView);
 
-        // Image
 
-        if (!(result.getPhotos() == null)) {
-            if (!(result.getPhotos().isEmpty())) {
-                glide.load("https://maps.googleapis.com/maps/api/place/photo" +
-                        "?maxwidth=400" +
-                        "&maxheight=400" +
-                        "&photoreference=" + result.getPhotos().get(0).getPhotoReference() +
-                        "&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw").into(restaurant_picture);
+            Gson gson = new Gson();
+            String strObj = getIntent().getStringExtra("obj");
+            result = gson.fromJson(strObj, Result.class);
+
+            workmate = (Workmate) getIntent().getSerializableExtra("workmate");
+
+
+
+            detailViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+            detailViewModel.init(result.getPlaceId());
+            detailViewModel.getDetails().observe(this, new Observer<com.example.go4lunch.googlemapsretrofit.pojo.details.Result>() {
+                @Override
+                public void onChanged(com.example.go4lunch.googlemapsretrofit.pojo.details.Result details) {
+
+                    website = details.getWebsite();
+                    phone = details.getFormattedPhoneNumber();
+
+                }
+            });
+
+            restaurant_name.setText(result.getName());
+            restaurant_address.setText(result.getVicinity());
+
+
+            // Image
+
+            if (!(result.getPhotos() == null)) {
+                if (!(result.getPhotos().isEmpty())) {
+                    glide.load("https://maps.googleapis.com/maps/api/place/photo" +
+                            "?maxwidth=400" +
+                            "&maxheight=400" +
+                            "&photoreference=" + result.getPhotos().get(0).getPhotoReference() +
+                            "&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw").into(restaurant_picture);
+                }
+            } else {
+                glide.load(R.drawable.ic_no_image_available).apply(RequestOptions.centerCropTransform()).into(restaurant_picture);
             }
-        } else {
-            glide.load(R.drawable.ic_no_image_available).apply(RequestOptions.centerCropTransform()).into(restaurant_picture);
+
+            // Rating
+
+            if (result.getRating() != null) {
+                double googleRating = result.getRating();
+                double rating = googleRating / MAX_RATING * MAX_STAR;
+                this.restaurant_rating.setRating((float) rating);
+                this.restaurant_rating.setVisibility(View.VISIBLE);
+            }
+
         }
 
-        // Rating
+        // --------------
+        // BUTTONS
+        // --------------
 
-        if (result.getRating() != null) {
-            double googleRating = result.getRating();
-            double rating = googleRating / MAX_RATING * MAX_STAR;
-            this.restaurant_rating.setRating((float) rating);
-            this.restaurant_rating.setVisibility(View.VISIBLE);
+        // Website
+
+        @OnClick(R.id.website)
+        public void onClickWeb () {
+            if (website != null) {
+                this.configureCustomTabs();
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.website_unavailable), Toast.LENGTH_SHORT).show();
+            }
         }
 
-    }
-
-    // --------------
-    // BUTTONS
-    // --------------
-
-    // Website
-
-    @OnClick(R.id.website)
-    public void onClickWeb() {
-        if (website != null) {
-            this.configureCustomTabs();
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.website_unavailable), Toast.LENGTH_SHORT).show();
+        private void configureCustomTabs () {
+            String url = website;
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(this, Uri.parse(url));
         }
-    }
 
-    private void configureCustomTabs() {
-        String url = website;
-        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-        CustomTabsIntent customTabsIntent = builder.build();
-        customTabsIntent.launchUrl(this, Uri.parse(url));
-    }
+        // Phone
 
-    // Phone
-
-    @OnClick(R.id.call)
-    public void onClickCall() {
-        if (phone != null) {
-            Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null));
-            startActivity(callIntent);
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.phone_unavailable), Toast.LENGTH_SHORT).show();
+        @OnClick(R.id.call)
+        public void onClickCall () {
+            if (phone != null) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null));
+                startActivity(callIntent);
+            } else {
+                Toast.makeText(this, getResources().getString(R.string.phone_unavailable), Toast.LENGTH_SHORT).show();
+            }
         }
-    }
 
-    // Like
+        // Like
 
-    @OnClick(R.id.like)
-    public void onClickLike(View v) {
-        if(!liked){
+        @OnClick(R.id.like)
+        public void onClickLike (View v){
+            if (workmate.getLikes().contains(result.getName())) {
                 this.likeRestaurant();
-            }else {
+            } else {
                 this.dislikeRestaurant();
             }
         }
 
+        private void likeRestaurant () {
+            Toast.makeText(this, "Liked", Toast.LENGTH_SHORT).show();
+            workmate.getLikes().add(result.getName());
+            detailViewModel.updateLikes(workmate.getUid(),workmate.getLikes());
+        }
 
-    private void likeRestaurant() {
-        Toast.makeText(this, "Liked", Toast.LENGTH_SHORT).show();
+        private void dislikeRestaurant () {
+            Toast.makeText(this, "Unliked", Toast.LENGTH_SHORT).show();
+            workmate.getLikes().remove(result.getName());
+            detailViewModel.updateLikes(workmate.getUid(),null);
+        }
 
+        // Choice
 
-    }
+        @OnClick(R.id.choice_button)
+        public void onClickChoice () {
+            if (workmate.getInterestedBy() == null ) {
+                interestedBy();
+            } else if (workmate.getInterestedBy().equals(result.getName())){
+                notInterestedBy();
+            }
+        }
 
-    private void dislikeRestaurant() {
+        public void interestedBy () {
 
-    }
+            detailViewModel.updateChoice(workmate.getUid(), result.getName());
+            choice_button.setImageResource(R.drawable.validate);
+        }
 
-    // Choice
+        public void notInterestedBy () {
 
-    @OnClick(R.id.choice_button)
-    public void onClickChoice(){
-        if (!liked){
-            interestedBy();
-        }else if (liked){
-            notInterestedBy();
+            choice_button.setImageResource(R.drawable.before_validate);
+            detailViewModel.updateChoice(workmate.getUid(), null);
         }
     }
 
-    public void interestedBy(){
-        liked = true;
-        //detailViewModel.updateChoice(UserDataRepository.getCurrentUser().getUid(), result.getName());
-        choice_button.setImageDrawable(getResources().getDrawable(R.drawable.validate));
-    }
 
-    public void notInterestedBy(){
-        liked = false;
-        choice_button.setImageDrawable(getResources().getDrawable(R.drawable.before_validate));
-        //detailViewModel.updateChoice(UserDataRepository.getCurrentUser().getUid(), "");
-    }
-}
 

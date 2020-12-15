@@ -7,4 +7,24 @@
     android:background="?attr/colorPrimary"
     app:theme="@style/ToolBarStyle">
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="horizontal">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_restaurant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:queryBackground="@android:color/transparent"
+        app:queryHint="@string/search_a_restaurant"
+        app:searchIcon="@drawable/ic_search"
+        app:voiceIcon="@drawable/ic_mic"
+        android:inputType="textAutoComplete|textAutoCorrect"
+        />
+
+
+    </LinearLayout>
+
 </androidx.appcompat.widget.Toolbar>

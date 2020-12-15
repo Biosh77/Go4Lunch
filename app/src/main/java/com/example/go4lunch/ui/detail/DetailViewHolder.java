@@ -34,8 +34,6 @@ public class DetailViewHolder extends RecyclerView.ViewHolder {
     public void updateWithData(Workmate workmate){
         RequestManager glide = Glide.with(itemView);
 
-
-
         // Photo
         glide.load(workmate.getUrlPicture()).apply(RequestOptions.circleCropTransform()).into(user_restaurant_photo);
 
