@@ -23,11 +23,15 @@ import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
+import com.example.go4lunch.models.Workmate;
+import com.example.go4lunch.repository.RestaurantDataRepository;
+import com.example.go4lunch.repository.UserDataRepository;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -35,8 +39,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import java.util.List;
-
-
 
 
 public class MapFragment extends Fragment implements LocationListener {
@@ -47,6 +49,10 @@ public class MapFragment extends Fragment implements LocationListener {
     private android.location.Location onlyOneLocation;
     private LocationManager locationManager;
     private final int REQUEST_FINE_LOCATION = 1234;
+
+
+    private List<Workmate> mWorkmates;
+    private Workmate workmate;
 
 
     private ViewModel RestaurantViewModel;
@@ -122,46 +128,77 @@ public class MapFragment extends Fragment implements LocationListener {
         mMapView.onLowMemory();
     }
 
+
     @Override
     public void onLocationChanged(android.location.Location location) {
         onlyOneLocation = location;
         locationManager.removeUpdates(this);
 
         if (!isDetached()) {
-        RestaurantViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
-        RestaurantViewModel.init(onlyOneLocation);
-        RestaurantViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
-                    @Override
-                    public void onChanged(List<Result> results) {
-                        try {
-                            mMap.clear();
-                            // This loop will go through all the results and add marker on each location.
-                            for (int i = 0; i < results.size(); i++) {
-                                Double lat = results.get(i).getGeometry().getLocation().getLat();
-                                Double lng = results.get(i).getGeometry().getLocation().getLng();
-                                String placeName = results.get(i).getName();
-                                String vicinity = results.get(i).getVicinity();
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                LatLng latLng = new LatLng(lat, lng);
-                                // Position of Marker on Map
-                                markerOptions.position(latLng);
-                                // Adding Title to the Marker
-                                markerOptions.title(placeName + " : " + vicinity);
-                                // Adding Marker to the Camera.
-                                mMap.addMarker(markerOptions);
-                                // Adding colour to the marker
-                                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                // move map camera
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                                mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                            }
-                        } catch (Exception e) {
-                            Log.d("onResponse", "There is an error");
-                            e.printStackTrace();
+            RestaurantViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+            RestaurantViewModel.init(onlyOneLocation);
+            RestaurantViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
+                        @Override
+                        public void onChanged(List<Result> results) {
+                            RestaurantViewModel.getWorkmate().observe(MapFragment.this, workmates -> {
+                                mWorkmates = workmates;
+                          showMap(results);
+
+
+
+                            });
                         }
                     }
+            );
+        }
+    }
+
+
+    private boolean getIfAWorkmateIsInterested(Result restaurant){
+        for (int i = 0; i < mWorkmates.size() ; i++)
+            if (restaurant.getName().equals(mWorkmates.get(i).getInterestedBy())) {
+                return true;
+            } return false;
+    }
+
+    public void showMap(List<Result> results){
+        try {
+            mMap.clear();
+            // This loop will go through all the results and add marker on each location.
+            for (int i = 0; i < results.size(); i++) {
+
+                Double lat = results.get(i).getGeometry().getLocation().getLat();
+                Double lng = results.get(i).getGeometry().getLocation().getLng();
+                LatLng latLng = new LatLng(lat, lng);
+                String placeName = results.get(i).getName();
+                String vicinity = results.get(i).getVicinity();
+
+                BitmapDescriptor icon;
+
+                if (getIfAWorkmateIsInterested(results.get(i))) {
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_marker_green);
+                }else {
+                    icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_marker_orange);
                 }
-        );
+
+
+                MarkerOptions markerOptions = new MarkerOptions().icon(icon);
+                // Position of Marker on Map
+                markerOptions.position(latLng);
+                // Adding Title to the Marker
+                markerOptions.title(placeName + " : " + vicinity);
+                // Adding Marker to the Camera.
+                mMap.addMarker(markerOptions);
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+            }
+
+
+        } catch (
+                Exception e) {
+            Log.d("onResponse", "There is an error");
+            e.printStackTrace();
         }
     }
 

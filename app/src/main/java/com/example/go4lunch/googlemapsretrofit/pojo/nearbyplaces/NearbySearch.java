@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class Example implements Serializable {
+public class NearbySearch implements Serializable {
 
     @SerializedName("html_attributions")
     @Expose

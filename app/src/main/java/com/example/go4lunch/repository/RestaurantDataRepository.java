@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.go4lunch.googlemapsretrofit.RetrofitMaps;
 import com.example.go4lunch.googlemapsretrofit.pojo.details.Details;
-import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Example;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.NearbySearch;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 
 import java.util.List;
@@ -29,12 +29,12 @@ public class RestaurantDataRepository {
         RetrofitMaps mapsService = RetrofitMaps.retrofit.create(RetrofitMaps.class);
 
         // 2.3 - Create the call on the API
-        Call<Example> call = mapsService.getNearbyPlaces("restaurant", location.getLatitude() + "," + location.getLongitude(), PROXIMITY_RADIUS);
+        Call<NearbySearch> call = mapsService.getNearbyPlaces("restaurant", location.getLatitude() + "," + location.getLongitude(), PROXIMITY_RADIUS);
         // 2.4 - Start the call
-        call.enqueue(new Callback<Example>() {
+        call.enqueue(new Callback<NearbySearch>() {
 
             @Override
-            public void onResponse(Response<Example> response, Retrofit retrofit) {
+            public void onResponse(Response<NearbySearch> response, Retrofit retrofit) {
                 results.setValue(response.body().getResults());
 
 
