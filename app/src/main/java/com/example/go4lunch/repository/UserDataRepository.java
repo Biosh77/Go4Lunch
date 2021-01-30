@@ -104,13 +104,15 @@ public class UserDataRepository {
         });
     }
 
-    
-    // --- DELETE ---//
 
-
-    public static Task<Void> deleted(String uid) {
-        return UserDataRepository.getUserCollection().document(uid).delete();
+    public static Task<DocumentSnapshot> getWorkmate(String uid) {
+        return UserDataRepository.getUserCollection().document(uid).get();
     }
+
+    public static Task<QuerySnapshot> getWorkmatesWhoHaveSameChoice(String interestedBy) {
+        return getUserCollection().whereEqualTo("interestedBy", interestedBy).get();
+    }
+
 
 
     public static FirebaseUser getCurrentUser(){return FirebaseAuth.getInstance().getCurrentUser();}

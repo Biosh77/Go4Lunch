@@ -45,7 +45,7 @@ public class WorkmatesFragment extends Fragment {
         workmatesViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
         View root = inflater.inflate(R.layout.fragment_workmates, container, false);
         workmatesViewModel.init();
-        workmatesViewModel.getWorkmate().observe(getViewLifecycleOwner(), new Observer<List<Workmate>>() {
+        workmatesViewModel.getWorkmates().observe(getViewLifecycleOwner(), new Observer<List<Workmate>>() {
             @Override
             public void onChanged(List<Workmate> workmates) {
                 configureRecyclerView(workmates);

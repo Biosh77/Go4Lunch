@@ -47,4 +47,12 @@
     <string name="phone_unavailable">unavailable phone</string>
     <string name="search_a_restaurant">Search restaurants</string>
 
+    <!-- Notifications -->
+    <string name="notification">You eat at %1$s where is at %2$s with : No one</string>
+    <string name="notification_alone">You eat at %1$s where is at %2$s with : No one</string>
+    <string name="no_restaurant">No Restaurant</string>
+    <string name="located_at">"  located at  "</string>
+    <string name="name">Go4Lunch</string>
+    <string name="default_notification_channel_id">default id</string>
+
 </resources>

@@ -38,7 +38,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:text="TEXT EXAMPLE"
+            android:text="Switch Notifications ON/OFF"
             android:textColor="@color/colorBlack" />
 
         <androidx.appcompat.widget.SwitchCompat

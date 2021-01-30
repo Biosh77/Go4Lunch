@@ -76,13 +76,12 @@ public class DetailActivity extends BaseActivity {
     private List<Workmate> mWorkmates;
     private ViewModel detailViewModel;
 
-
-    private Result result;
     private Workmate workmate;
 
     private String website;
     private String phone;
 
+    private Result result; // à supprimer
 
     @Override
     public int getLayout() {
@@ -91,7 +90,6 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void onConfigureDesign() {
-
 
         updateUi();
         getWorkmateChoice();
@@ -128,7 +126,7 @@ public class DetailActivity extends BaseActivity {
 
 
 
-    //method
+    //updateUi like/choice
 
     public void updateChoiceUi(Workmate workmate, Result result){
         if (workmate.getInterestedBy() == null || !workmate.getInterestedBy().contains(result.getName())) {
@@ -138,14 +136,23 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
+    public void updateLikeUi(Workmate workmate, Result result){
+        if (workmate.getLikes() == null || !workmate.getLikes().contains(result.getName())) {
+            like_button.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_star_foreground,0,0);
+        } else {
+            like_button.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_star_liked,0,0);
+        }
+    }
+
     private void updateUi() {
 
 
         RequestManager glide = Glide.with(recyclerView);
 
+        Gson gson = new Gson(); // à virer
 
-        Gson gson = new Gson();
         String strObj = getIntent().getStringExtra("obj");
+
         result = gson.fromJson(strObj, Result.class);
 
         workmate = (Workmate) getIntent().getSerializableExtra("workmate");
@@ -159,11 +166,13 @@ public class DetailActivity extends BaseActivity {
 
                 website = details.getWebsite();
                 phone = details.getFormattedPhoneNumber();
+                //name = details.getName();
 
             }
         });
 
         updateChoiceUi(workmate,result);
+        updateLikeUi(workmate,result);
 
         restaurant_name.setText(result.getName());
         restaurant_address.setText(result.getVicinity());
@@ -237,6 +246,7 @@ public class DetailActivity extends BaseActivity {
         } else {
             this.dislikeRestaurant();
         }
+        updateLikeUi(workmate,result);
     }
 
     private void likeRestaurant() {

@@ -3,6 +3,7 @@ package com.example.go4lunch.injection;
 
 
 
+import com.example.go4lunch.repository.AutoCompleteRepository;
 import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
 
@@ -21,11 +22,14 @@ public class Injection {
         return new UserDataRepository();
     }
 
+    public static AutoCompleteRepository provideAutocompleteRepository(){return new AutoCompleteRepository();}
+
 
     public static ViewModelFactory provideViewModelFactory(){
         RestaurantDataRepository dataSourceRestaurant=provideRestaurantDataSource();
         UserDataRepository dataSourceUser=provideUserRepository();
-        return new ViewModelFactory(dataSourceRestaurant,dataSourceUser);
+        AutoCompleteRepository dataSourceAuto=provideAutocompleteRepository();
+        return new ViewModelFactory(dataSourceRestaurant,dataSourceUser,dataSourceAuto);
     }
 
 }

@@ -47,14 +47,12 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         workmates = userDataRepository.GetWorkmates();
     }
 
-
     private final MutableLiveData<String> nomRestaurant = new MutableLiveData<>();
     public final LiveData<List<Prediction>> predictionRestaurant  =
-            Transformations.switchMap(nomRestaurant, (address) -> {
-                return autoCompleteRepository.getPlacesAutoComplete(address);
-            });
+            Transformations.switchMap(nomRestaurant, (address) -> autoCompleteRepository.getPlacesAutoComplete(address));
 
-    private void setInput(String address) {
+
+    public void setInput(String address) {
         nomRestaurant.setValue(address);
     }
 
@@ -64,7 +62,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         return restaurants;
     }
 
-    public LiveData<List<Workmate>> getWorkmate() {
+    public LiveData<List<Workmate>> getWorkmates() {
         return workmates;
     }
 

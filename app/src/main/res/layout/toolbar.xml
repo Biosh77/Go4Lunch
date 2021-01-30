@@ -17,12 +17,9 @@
             android:id="@+id/search_restaurant"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:queryBackground="@android:color/transparent"
-            app:queryHint="@string/search_a_restaurant"
-            app:searchIcon="@drawable/ic_search"
-            app:voiceIcon="@drawable/ic_mic"
             android:inputType="textAutoComplete|textAutoCorrect"
-            />
+            app:queryBackground="@android:color/transparent"
+            app:searchIcon="@drawable/ic_search" />
     </LinearLayout>
 
 

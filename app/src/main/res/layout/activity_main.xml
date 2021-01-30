@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.go4lunch.MainActivity">
+    tools:context="com.example.go4lunch.ConnectionActivity">
 
     <ImageView
         android:id="@+id/lunch"
@@ -31,7 +31,7 @@
 
             />
 
-        <!-- BUTTTONS CONTAINER -->
+        <!-- BUTTONS CONTAINER -->
 
 
         <RelativeLayout
@@ -53,6 +53,16 @@
                 android:layout_height="50dp"
                 android:layout_below="@id/sign_in_button"
                 android:layout_marginTop="10dp" />
+
+            <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                android:id="@+id/twitter_login_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/login__fb_button"
+                android:layout_marginTop="10dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
 
         </RelativeLayout>
 

@@ -1,9 +1,12 @@
 package com.example.go4lunch;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,27 +14,43 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.base.BaseActivity;
-import com.example.go4lunch.ui.drawer.LunchActivity;
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
+import com.example.go4lunch.injection.Injection;
+import com.example.go4lunch.models.Workmate;
+import com.example.go4lunch.repository.UserDataRepository;
+import com.example.go4lunch.ui.autoComplete.PlacesAutoCompleteAdapter;
+import com.example.go4lunch.ui.detail.DetailActivity;
 import com.example.go4lunch.ui.drawer.SettingsActivity;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import android.content.Intent;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.gson.Gson;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.List;
+import java.util.Objects;
+
 import butterknife.BindView;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class AccueilActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,7 +60,12 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private FirebaseAuth mAuth;
-
+    private SearchView.SearchAutoComplete mSearchAutoComplete;
+    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
+    private ViewModel mViewModel;
+    private Workmate workmate;
+    private Result result;
+    private List<Workmate> mWorkmates;
 
 
     @BindView(R.id.accueil_nav_view)
@@ -58,6 +82,12 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
         mAuth = FirebaseAuth.getInstance();
 
+        initSearchView();
+
+
+        mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        mViewModel.init();
+        mViewModel.getWorkmates().observe(this, workmates -> mWorkmates= workmates);
 
         this.configureToolBar();
 
@@ -69,6 +99,35 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
         this.updateUIWhenCreating();
 
+
+    }
+
+    public void initSearchView() {
+
+        mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        mViewModel.predictionRestaurant.observe(this, predictions -> {
+            mSearchAutoComplete.setAdapter(new PlacesAutoCompleteAdapter(getApplicationContext(),predictions ));
+            mSearchAutoComplete.showDropDown();
+        });
+
+
+        SearchView searchView = findViewById(R.id.search_restaurant);
+        mSearchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchView.setQueryHint("search a restaurant");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mViewModel.setInput(newText);
+
+
+                return true;
+            }
+        });
     }
 
     // BOTTOM NAV MENU
@@ -107,14 +166,47 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
         return true;
     }
 
-
-
-    private void lunch(){
-        Intent lunchIntent = new Intent(this, LunchActivity.class);
-        startActivity(lunchIntent);
+    public Workmate currentWorkmate(){
+        for (int i = 0; i < mWorkmates.size() ; i++) {
+            if (UserDataRepository.getCurrentUser().getUid().equals(mWorkmates.get(i).getUid())) {
+                workmate = mWorkmates.get(i);
+            }
+        }return workmate;
     }
 
-    private void settings(){
+    private void lunch() {
+
+
+        workmate = currentWorkmate();
+
+                if (workmate.getInterestedBy() != null) {
+                    Gson gson = new Gson();
+                    Intent intent = new Intent(this, DetailActivity.class);
+                    intent.putExtra("obj",gson.toJson(result));
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("workmate", currentWorkmate());
+                    intent.putExtras(bundle);
+                    startActivity(intent);;
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
+                }
+
+
+/*
+        if (workmate.getInterestedBy() == null || !workmate.getInterestedBy().contains(result.getName())) {
+            Toast.makeText(this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
+        } else {
+            Gson gson = new Gson();
+            Intent intent = new Intent(this, DetailActivity.class);
+            intent.putExtra("obj", gson.toJson(result));
+            startActivity(intent);
+        }
+
+ */
+    }
+
+
+    private void settings() {
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
         startActivity(settingsIntent);
     }
@@ -126,6 +218,8 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
         GoogleSignOut();
         // FaceBook sign out
         LoginManager.getInstance().logOut();
+        // Twitter sign out
+
 
         sendToLogin();
     }
@@ -141,7 +235,7 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
     private void sendToLogin() {
 
-        Intent loginIntent = new Intent(AccueilActivity.this, MainActivity.class);
+        Intent loginIntent = new Intent(AccueilActivity.this, ConnectionActivity.class);
         startActivity(loginIntent);
         finish();
 
@@ -195,7 +289,6 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     private void updateUIWhenCreating() {
 
 
-
         ImageView avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar_user);
 
 
@@ -218,7 +311,7 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
             email2.setText(email);
 
             // 7 - Get additional data from Firestore ( Username)
-           user.setText(this.getCurrentUser().getDisplayName());
+            user.setText(this.getCurrentUser().getDisplayName());
         }
     }
 

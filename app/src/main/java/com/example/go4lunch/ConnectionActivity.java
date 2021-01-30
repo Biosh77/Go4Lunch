@@ -2,7 +2,6 @@ package com.example.go4lunch;
 
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -12,11 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 
-
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.base.BaseActivity;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookButtonBase;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
@@ -37,7 +36,16 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.auth.TwitterAuthProvider;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 
 import java.util.Arrays;
@@ -45,10 +53,11 @@ import java.util.Arrays;
 import butterknife.BindView;
 
 
-public class MainActivity extends BaseActivity {
+public class ConnectionActivity extends BaseActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = ConnectionActivity.class.getSimpleName();
     static final int GOOGLE_SIGN = 123;
+    static final int FACEBOOK_SIGN = 456;
     private GoogleSignInOptions mGoogleSignInOptions;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
@@ -60,6 +69,9 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.login__fb_button)
     LoginButton btn_fb_login;
+
+    @BindView(R.id.twitter_login_button)
+    TwitterLoginButton btn_twitter_login;
 
     @BindView(R.id.lunch)
     ImageView image_lunch;
@@ -77,6 +89,7 @@ public class MainActivity extends BaseActivity {
 
 
         FbSignIn();
+        TwitterSignIn();
         GoogleSignIn();
         signIn();
     }
@@ -85,6 +98,7 @@ public class MainActivity extends BaseActivity {
     //--------
     // REQUEST
     //--------
+
 
     private void createUserInFirestore() {
         if (this.getCurrentUser() != null) {
@@ -97,6 +111,58 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    //---------
+    // TWITTER
+    //---------
+
+    private void TwitterSignIn() {
+
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig("rBscj5lwKypInk7NyDzUJXUCa",
+                        "ygf5LC39cRpMpBvrCPpbUgjXMjp6FtRxBA8lvY2bbU4b0PF35d"))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
+
+        btn_twitter_login.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                Log.d(TAG, "loginButton Callback: Success");
+                exchangeTwitterToken(result.data);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Log.d(TAG, "loginButton Callback: Failure " +
+                        exception.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void exchangeTwitterToken(TwitterSession session) {
+
+        AuthCredential credential = TwitterAuthProvider.getCredential(
+                session.getAuthToken().token,
+                session.getAuthToken().secret);
+
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential",
+                                    task.getException());
+                            signInStartActivity();
+                            Toast.makeText(ConnectionActivity.this,
+                                    "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
 
     //---------
     // FACEBOOK
@@ -106,7 +172,7 @@ public class MainActivity extends BaseActivity {
         btn_fb_login.setOnClickListener(v -> {
             mCallbackManager = CallbackManager.Factory.create();
 
-            LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("email", "public_profile"));
+            LoginManager.getInstance().logInWithReadPermissions(ConnectionActivity.this, Arrays.asList("email", "public_profile"));
             LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
@@ -147,7 +213,7 @@ public class MainActivity extends BaseActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                            Toast.makeText(ConnectionActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -158,7 +224,7 @@ public class MainActivity extends BaseActivity {
 
         createUserInFirestore();
 
-        Intent intent = new Intent(MainActivity.this, AccueilActivity.class);
+        Intent intent = new Intent(ConnectionActivity.this, AccueilActivity.class);
         startActivity(intent);
         finish();
     }
@@ -225,9 +291,10 @@ public class MainActivity extends BaseActivity {
         } else {
             // Pass the activity result back to the Facebook SDK
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        }
+        }//else{
+           // btn_twitter_login.onActivityResult(requestCode, resultCode, data);
+       //}
     }
-
 
 
 }

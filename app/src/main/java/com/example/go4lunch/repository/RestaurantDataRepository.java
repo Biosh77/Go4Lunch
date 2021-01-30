@@ -1,4 +1,3 @@
-
 package com.example.go4lunch.repository;
 
 import android.util.Log;
@@ -49,8 +48,7 @@ public class RestaurantDataRepository {
     }
 
 
-
-    public MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> getDetailsRestaurant(String placeId){
+    public MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> getDetailsRestaurant(String placeId) {
 
         MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> results = new MutableLiveData<>();
 
@@ -65,13 +63,11 @@ public class RestaurantDataRepository {
             }
 
             @Override
-            public void onFailure(Throwable t) {Log.d("TAG", "onFailure: " + t.getMessage()); }
+            public void onFailure(Throwable t) {
+                Log.d("TAG", "onFailure: " + t.getMessage());
+            }
         });
 
         return results;
     }
-
-
-  
-
 }

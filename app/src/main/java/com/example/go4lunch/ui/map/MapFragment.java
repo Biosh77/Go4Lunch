@@ -140,7 +140,7 @@ public class MapFragment extends Fragment implements LocationListener {
             RestaurantViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
                         @Override
                         public void onChanged(List<Result> results) {
-                            RestaurantViewModel.getWorkmate().observe(MapFragment.this, workmates -> {
+                            RestaurantViewModel.getWorkmates().observe(MapFragment.this, workmates -> {
                                 mWorkmates = workmates;
                           showMap(results);
 

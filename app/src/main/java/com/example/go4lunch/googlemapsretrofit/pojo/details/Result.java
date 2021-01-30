@@ -1,6 +1,8 @@
 package com.example.go4lunch.googlemapsretrofit.pojo.details;
 
 import java.util.List;
+
+import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Photo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -60,6 +62,9 @@ public class Result {
     @SerializedName("website")
     @Expose
     private String website;
+    @SerializedName("photos")
+    @Expose
+    private List<Photo> photos = null;
 
     public List<AddressComponent> getAddressComponents() {
         return addressComponents;
@@ -203,6 +208,10 @@ public class Result {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
     }
 
 }
