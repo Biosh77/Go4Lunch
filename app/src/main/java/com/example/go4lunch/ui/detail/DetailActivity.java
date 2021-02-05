@@ -23,7 +23,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
 import com.example.go4lunch.base.BaseActivity;
-import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
+import com.example.go4lunch.googlemapsretrofit.pojo.details.Result;
 import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.UserDataRepository;
@@ -75,13 +75,11 @@ public class DetailActivity extends BaseActivity {
     private DetailAdapter mDetailAdapter;
     private List<Workmate> mWorkmates;
     private ViewModel detailViewModel;
-
     private Workmate workmate;
-
     private String website;
     private String phone;
+    private Result result;
 
-    private Result result; // à supprimer
 
     @Override
     public int getLayout() {
@@ -91,10 +89,20 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onConfigureDesign() {
 
-        updateUi();
-        getWorkmateChoice();
-    }
+        String place = getIntent().getStringExtra("id");
+        workmate = (Workmate) getIntent().getSerializableExtra("workmate");
 
+        detailViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        detailViewModel.init(place);
+        detailViewModel.getDetails().observe(this, details -> {
+            result = details;
+            updateUi(details);
+            getWorkmateChoice(details);
+            updateChoiceUi(workmate, result);
+            updateLikeUi(workmate, result);
+        });
+
+    }
 
     private void configureRecyclerView(List<Workmate> workmates) {
         this.mWorkmates = new ArrayList<>();
@@ -103,8 +111,7 @@ public class DetailActivity extends BaseActivity {
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-
-    private void getWorkmateChoice() {
+    private void getWorkmateChoice(Result result) {
         UserDataRepository.getUserCollection().whereEqualTo("interestedBy", result.getName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -124,59 +131,18 @@ public class DetailActivity extends BaseActivity {
         });
     }
 
-
-
-    //updateUi like/choice
-
-    public void updateChoiceUi(Workmate workmate, Result result){
-        if (workmate.getInterestedBy() == null || !workmate.getInterestedBy().contains(result.getName())) {
-            choice_button.setImageResource(R.drawable.before_validate);
-        } else {
-            choice_button.setImageResource(R.drawable.validate);
-        }
-    }
-
-    public void updateLikeUi(Workmate workmate, Result result){
-        if (workmate.getLikes() == null || !workmate.getLikes().contains(result.getName())) {
-            like_button.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_star_foreground,0,0);
-        } else {
-            like_button.setCompoundDrawablesWithIntrinsicBounds(0,R.drawable.ic_star_liked,0,0);
-        }
-    }
-
-    private void updateUi() {
-
+    private void updateUi(Result result) {
 
         RequestManager glide = Glide.with(recyclerView);
 
-        Gson gson = new Gson(); // à virer
-
-        String strObj = getIntent().getStringExtra("obj");
-
-        result = gson.fromJson(strObj, Result.class);
-
-        workmate = (Workmate) getIntent().getSerializableExtra("workmate");
-
-
-        detailViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
-        detailViewModel.init(result.getPlaceId());
-        detailViewModel.getDetails().observe(this, new Observer<com.example.go4lunch.googlemapsretrofit.pojo.details.Result>() {
-            @Override
-            public void onChanged(com.example.go4lunch.googlemapsretrofit.pojo.details.Result details) {
-
-                website = details.getWebsite();
-                phone = details.getFormattedPhoneNumber();
-                //name = details.getName();
-
-            }
-        });
-
-        updateChoiceUi(workmate,result);
-        updateLikeUi(workmate,result);
-
+        //Restaurant name
         restaurant_name.setText(result.getName());
+        //Restaurant address
         restaurant_address.setText(result.getVicinity());
-
+        //Website
+        website = result.getWebsite();
+        //Phone
+        phone = result.getFormattedPhoneNumber();
 
         // Image
 
@@ -201,6 +167,24 @@ public class DetailActivity extends BaseActivity {
             this.restaurant_rating.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    //updateUi like/choice
+
+    public void updateChoiceUi(Workmate workmate, Result result) {
+        if (workmate.getInterestedBy() == null || !workmate.getInterestedBy().contains(result.getName())) {
+            choice_button.setImageResource(R.drawable.before_validate);
+        } else {
+            choice_button.setImageResource(R.drawable.validate);
+        }
+    }
+
+    public void updateLikeUi(Workmate workmate, Result result) {
+        if (workmate.getLikes() == null || !workmate.getLikes().contains(result.getName())) {
+            like_button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_star_foreground, 0, 0);
+        } else {
+            like_button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_star_liked, 0, 0);
+        }
     }
 
     // --------------
@@ -246,7 +230,7 @@ public class DetailActivity extends BaseActivity {
         } else {
             this.dislikeRestaurant();
         }
-        updateLikeUi(workmate,result);
+        updateLikeUi(workmate, result);
     }
 
     private void likeRestaurant() {
@@ -272,7 +256,7 @@ public class DetailActivity extends BaseActivity {
         } else {
             notInterestedBy();
         }
-        updateChoiceUi(workmate,result);
+        updateChoiceUi(workmate, result);
     }
 
     public void interestedBy() {

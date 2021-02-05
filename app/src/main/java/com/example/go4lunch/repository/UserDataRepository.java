@@ -65,7 +65,12 @@ public class UserDataRepository {
     }
 
 
+
     // --- UPDATE --- //
+
+    public static Task<Void> updateUser(String uid, String username, String urlPicture) {
+        return UserDataRepository.getUserCollection().document(uid).update("username", username, "urlPicture", urlPicture);
+    }
 
     public void updateLikes(String uid, List<String> likes) {
 

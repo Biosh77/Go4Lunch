@@ -1,77 +1,48 @@
 package com.example.go4lunch;
 
 
+import android.Manifest;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-
+import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.base.BaseActivity;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookButtonBase;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.TwitterAuthProvider;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-
-import java.util.Arrays;
+import java.util.Collections;
 
 import butterknife.BindView;
+import butterknife.OnClick;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class ConnectionActivity extends BaseActivity {
 
-    private static final String TAG = ConnectionActivity.class.getSimpleName();
-    static final int GOOGLE_SIGN = 123;
-    static final int FACEBOOK_SIGN = 456;
-    private GoogleSignInOptions mGoogleSignInOptions;
-    private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseAuth mAuth;
-    private CallbackManager mCallbackManager;
+
+    private static final int RC_SIGN_IN = 123;
+    private final int REQUEST_LOCATION_PERMISSION = 1;
+    private String TAG = "permission";
+    private String message = "Permission granted";
 
 
     @BindView(R.id.sign_in_button)
     SignInButton btn_login;
 
     @BindView(R.id.login__fb_button)
-    LoginButton btn_fb_login;
+    Button btn_fb_login;
 
     @BindView(R.id.twitter_login_button)
-    TwitterLoginButton btn_twitter_login;
+    Button btn_twitter_login;
 
     @BindView(R.id.lunch)
     ImageView image_lunch;
@@ -84,218 +55,172 @@ public class ConnectionActivity extends BaseActivity {
     @Override
     protected void onConfigureDesign() {
 
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
+        requestLocationPermission();
 
+        if (isCurrentUserLogged()) {
+            this.startActivityIfLogged();
+        }
 
-        FbSignIn();
-        TwitterSignIn();
-        GoogleSignIn();
-        signIn();
     }
 
+    // --------------------
+    // ACTIONS
+    // --------------------
 
-    //--------
-    // REQUEST
-    //--------
-
-
-    private void createUserInFirestore() {
-        if (this.getCurrentUser() != null) {
-
-            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
-            String username = this.getCurrentUser().getDisplayName();
-            String uid = this.getCurrentUser().getUid();
-
-            UserDataRepository.createUser(uid, username, urlPicture).addOnSuccessListener(aVoid -> Log.d(TAG, "onSuccess: "));
+    // Google
+    @OnClick(R.id.sign_in_button)
+    public void onClickGoogleButton() {
+        if (isCurrentUserLogged()) {
+            this.startActivityIfLogged();
+        } else {
+            this.startSignInActivityForGoogle();
         }
     }
 
-    //---------
-    // TWITTER
-    //---------
-
-    private void TwitterSignIn() {
-
-        TwitterConfig config = new TwitterConfig.Builder(this)
-                .logger(new DefaultLogger(Log.DEBUG))
-                .twitterAuthConfig(new TwitterAuthConfig("rBscj5lwKypInk7NyDzUJXUCa",
-                        "ygf5LC39cRpMpBvrCPpbUgjXMjp6FtRxBA8lvY2bbU4b0PF35d"))
-                .debug(true)
-                .build();
-        Twitter.initialize(config);
-
-        btn_twitter_login.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                Log.d(TAG, "loginButton Callback: Success");
-                exchangeTwitterToken(result.data);
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                Log.d(TAG, "loginButton Callback: Failure " +
-                        exception.getLocalizedMessage());
-            }
-        });
-    }
-
-    private void exchangeTwitterToken(TwitterSession session) {
-
-        AuthCredential credential = TwitterAuthProvider.getCredential(
-                session.getAuthToken().token,
-                session.getAuthToken().secret);
-
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithCredential",
-                                    task.getException());
-                            signInStartActivity();
-                            Toast.makeText(ConnectionActivity.this,
-                                    "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    // Facebook
+    @OnClick(R.id.login__fb_button)
+    public void onClickFacebookButton() {
+        if (isCurrentUserLogged()) {
+            this.startActivityIfLogged();
+        } else {
+            this.startSignInActivityForFacebook();
+        }
     }
 
 
-    //---------
-    // FACEBOOK
-    //---------
-
-    private void FbSignIn() {
-        btn_fb_login.setOnClickListener(v -> {
-            mCallbackManager = CallbackManager.Factory.create();
-
-            LoginManager.getInstance().logInWithReadPermissions(ConnectionActivity.this, Arrays.asList("email", "public_profile"));
-            LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                    handleFacebookAccessToken(loginResult.getAccessToken());
-                }
-
-                @Override
-                public void onCancel() {
-                    Log.d(TAG, "facebook:onCancel");
-                }
-
-                @Override
-                public void onError(FacebookException error) {
-                    Log.d(TAG, "facebook:onError", error);
-                }
-            });
-
-        });
-
+    // Twitter
+    @OnClick(R.id.twitter_login_button)
+    public void onClickTwitterButton() {
+        if (isCurrentUserLogged()) {
+            this.startActivityIfLogged();
+        } else {
+            this.startSignInActivityForTwitter();
+        }
     }
 
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
 
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-                            signInStartActivity();
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(ConnectionActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // - Handle SignIn Activity response on activity result
+        this.handleResponseAfterSignIn(requestCode, resultCode, data);
     }
 
-    private void signInStartActivity() {
+    // --------------------
+    // NAVIGATION
+    // --------------------
 
-        createUserInFirestore();
+    // - Launch Sign-In Activity for Google
+    private void startSignInActivityForGoogle() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(
+                                Collections.singletonList(new AuthUI.IdpConfig.GoogleBuilder().build())) //Google
+                        .setIsSmartLockEnabled(false, true)
+                        .build(), RC_SIGN_IN);
+    }
 
-        Intent intent = new Intent(ConnectionActivity.this, AccueilActivity.class);
+    // - Launch Sign-In Activity for Facebook
+    private void startSignInActivityForFacebook() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(
+                                Collections.singletonList(new AuthUI.IdpConfig.FacebookBuilder().build())) //Facebook
+                        .setIsSmartLockEnabled(false, true)
+                        .build(), RC_SIGN_IN);
+    }
+
+    // - Launch Sign-In Activity for Twitter
+    private void startSignInActivityForTwitter() {
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(
+                                Collections.singletonList(new AuthUI.IdpConfig.TwitterBuilder().build()))//Twitter
+                        .setIsSmartLockEnabled(false, true)
+                        .build(), RC_SIGN_IN);
+    }
+
+    // --------------------
+    // UTILS
+    // --------------------
+
+    private void startActivityIfLogged() {
+        Intent intent = new Intent(this, AccueilActivity.class);
         startActivity(intent);
         finish();
     }
 
-    //------
-    //GOOGLE
-    //------
+    private void createUserFireStore() {
+        if (this.getCurrentUser() != null) {
+            String urlPicture = (this.getCurrentUser().getPhotoUrl() != null) ? this.getCurrentUser().getPhotoUrl().toString() : null;
+            String username = this.getCurrentUser().getDisplayName();
+            String uid = this.getCurrentUser().getUid();
 
-    private void GoogleSignIn() {
-        mGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_client_id))
-                .requestEmail()
-                .build();
-    }
+            UserDataRepository.getWorkmate(this.getCurrentUser().getUid()).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Workmate currentUser = task.getResult().toObject(Workmate.class);
+                    if (currentUser != null && this.getCurrentUser().getUid().equals(currentUser.getUid())) {
+                        UserDataRepository.updateUser(uid, username, urlPicture);
+                        this.startActivityIfLogged();
+                    } else {
+                        UserDataRepository.createUser(uid, username, urlPicture).addOnCompleteListener(task1 -> {
+                            this.startActivityIfLogged();
+                        })
+                                .addOnFailureListener(e -> Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_during_creating), Toast.LENGTH_SHORT).show());
+                    }
 
-    private void signIn() {
+                }
+            });
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, mGoogleSignInOptions);
-
-        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-
-        if (signInAccount != null || mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, AccueilActivity.class));
         }
 
-        btn_login.setOnClickListener(v -> {
-            Intent sign = mGoogleSignInClient.getSignInIntent();
-            startActivityForResult(sign, GOOGLE_SIGN);
-        });
     }
 
+    // - Method that handles response after SignIn Activity close
+    private void handleResponseAfterSignIn(int requestCode, int resultCode, Intent data) {
 
-    // -----------------------------
-    // UTILS / ActivityResult GOOGLE/FB
-    //-------------------------------
+        IdpResponse response = IdpResponse.fromResultIntent(data);
+
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) { // SUCCESS
+                this.createUserFireStore();
+
+            } else { // ERRORS
+                if (response == null) {
+                    Toast.makeText(this, getResources().getString(R.string.cancel), Toast.LENGTH_SHORT).show();
+                } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Toast.makeText(this, getResources().getString(R.string.no_network), Toast.LENGTH_SHORT).show();
+                } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    Toast.makeText(this, getResources().getString(R.string.error_restaurant), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    // -------------------
+    // PERMISSIONS
+    // -------------------
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-
-        if (requestCode == GOOGLE_SIGN) {
-            Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
-
-            try {
-                GoogleSignInAccount signInAcc = signInTask.getResult(ApiException.class);
-                AuthCredential authCredential = GoogleAuthProvider.getCredential(signInAcc.getIdToken(), null);
-
-                mAuth.signInWithCredential(authCredential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Toast.makeText(getApplicationContext(), "You are connected", Toast.LENGTH_SHORT).show();
-                        signInStartActivity();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            } catch (ApiException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // Pass the activity result back to the Facebook SDK
-            mCallbackManager.onActivityResult(requestCode, resultCode, data);
-        }//else{
-           // btn_twitter_login.onActivityResult(requestCode, resultCode, data);
-       //}
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
+    @AfterPermissionGranted(REQUEST_LOCATION_PERMISSION)
+    public void requestLocationPermission() {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            Log.i(TAG, message);
+        } else {
+            EasyPermissions.requestPermissions(this, getResources().getString(R.string.location_permission), REQUEST_LOCATION_PERMISSION, perms);
+        }
+    }
 
 }
 

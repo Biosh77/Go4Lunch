@@ -47,21 +47,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
 
-            <com.facebook.login.widget.LoginButton
+            <Button
+                android:textAllCaps="false"
                 android:id="@+id/login__fb_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_below="@id/sign_in_button"
-                android:layout_marginTop="10dp" />
+                android:textColor="@color/white"
+                android:text="@string/Sign_in_with_Facebook"
+                android:drawableStart="@drawable/ic_facebook_32x32"
+                android:paddingLeft="10dp"
+                android:background="#3b5998"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@drawable/ic_facebook_32x32" />
 
-            <com.twitter.sdk.android.core.identity.TwitterLoginButton
+            <Button
+                android:textAllCaps="false"
                 android:id="@+id/twitter_login_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_below="@+id/login__fb_button"
                 android:layout_marginTop="10dp"
                 android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"/>
+                android:textColor="@color/white"
+                android:text="@string/sign_in_with_twitter"
+                android:paddingLeft="10dp"
+                android:drawableStart="@drawable/ic_twitter_32x32"
+                android:background="#00acee"
+                android:layout_centerHorizontal="true"
+                android:drawableLeft="@drawable/ic_twitter_32x32" />
 
 
         </RelativeLayout>

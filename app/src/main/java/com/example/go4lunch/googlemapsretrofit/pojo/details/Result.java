@@ -214,4 +214,8 @@ public class Result {
         return photos;
     }
 
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
+    }
+
 }

@@ -171,9 +171,9 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
     @Override
     public void onRestaurantClick(Result result) {
 
-        Gson gson = new Gson();// non necéssaire
+
         Intent intent = new Intent(getContext(), DetailActivity.class);
-        intent.putExtra("obj", gson.toJson(result));// result.getId()
+        intent.putExtra("id", result.getPlaceId());
         Bundle bundle = new Bundle();
         bundle.putSerializable("workmate", currentWorkmate());
         intent.putExtras(bundle);

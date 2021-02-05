@@ -57,4 +57,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Nullable
     protected FirebaseUser getCurrentUser(){return FirebaseAuth.getInstance().getCurrentUser();}
 
+    public Boolean isCurrentUserLogged() { return (this.getCurrentUser() != null); }
+
 }

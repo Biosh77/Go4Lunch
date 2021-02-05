@@ -22,6 +22,7 @@ import com.example.go4lunch.ui.autoComplete.PlacesAutoCompleteAdapter;
 import com.example.go4lunch.ui.detail.DetailActivity;
 import com.example.go4lunch.ui.drawer.SettingsActivity;
 import com.facebook.login.LoginManager;
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -66,6 +67,7 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     private Workmate workmate;
     private Result result;
     private List<Workmate> mWorkmates;
+    private static final int SIGN_OUT_TASK = 10;
 
 
     @BindView(R.id.accueil_nav_view)
@@ -159,11 +161,28 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
                 settings();
                 break;
             case R.id.accueil_drawer_logout:
-                logOut();
+                signOutUserFromFireBase();
                 break;
         }
         this.drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void signOutUserFromFireBase() {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnSuccessListener(this, this.updateUIAfterRequestCompleted(SIGN_OUT_TASK));
+    }
+
+    // Create OnCompleteListener called after tasks ended
+    private OnSuccessListener<Void> updateUIAfterRequestCompleted(final int origin) {
+        return aVoid -> {
+            if (origin == SIGN_OUT_TASK) {
+                Intent intent = new Intent(this, ConnectionActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        };
     }
 
     public Workmate currentWorkmate(){
@@ -176,33 +195,19 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
     private void lunch() {
 
-
         workmate = currentWorkmate();
 
-                if (workmate.getInterestedBy() != null) {
-                    Gson gson = new Gson();
-                    Intent intent = new Intent(this, DetailActivity.class);
-                    intent.putExtra("obj",gson.toJson(result));
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("workmate", currentWorkmate());
-                    intent.putExtras(bundle);
-                    startActivity(intent);;
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
-                }
+        if (workmate.getInterestedBy() != null) {
 
-
-/*
-        if (workmate.getInterestedBy() == null || !workmate.getInterestedBy().contains(result.getName())) {
-            Toast.makeText(this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
-        } else {
-            Gson gson = new Gson();
             Intent intent = new Intent(this, DetailActivity.class);
-            intent.putExtra("obj", gson.toJson(result));
-            startActivity(intent);
+            intent.putExtra("id", result.getPlaceId());
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("workmate", currentWorkmate());
+            intent.putExtras(bundle);
+            startActivity(intent);;
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
         }
-
- */
     }
 
 
@@ -211,35 +216,6 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
         startActivity(settingsIntent);
     }
 
-    private void logOut() {
-        // Firebase sign out
-        mAuth.signOut();
-        // Google sign out
-        GoogleSignOut();
-        // FaceBook sign out
-        LoginManager.getInstance().logOut();
-        // Twitter sign out
-
-
-        sendToLogin();
-    }
-
-    private void GoogleSignOut() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.
-                Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).
-                build();
-
-        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
-        googleSignInClient.signOut();
-    }
-
-    private void sendToLogin() {
-
-        Intent loginIntent = new Intent(AccueilActivity.this, ConnectionActivity.class);
-        startActivity(loginIntent);
-        finish();
-
-    }
 
     @Override
     public void onBackPressed() {

@@ -12,9 +12,6 @@
     <string name="Like">LIKE</string>
     <string name="Call">CALL</string>
 
-    <string name="facebook_app_id">199776401444652</string> <string name="fb_login_protocol_scheme">fb199776401444652</string>
-
-    <string name="web_client_id" translatable="false">393519322474-gnp7gcd6gt03goskrpduc2c7pf5m7ssd.apps.googleusercontent.com</string>
 
     <!-- Used in NavigationDrawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -54,5 +51,27 @@
     <string name="located_at">"  located at  "</string>
     <string name="name">Go4Lunch</string>
     <string name="default_notification_channel_id">default id</string>
+
+
+
+    <!-- FACEBOOK -->
+    <string name="facebook_application_id" translatable="false">199776401444652</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb199776401444652</string>
+
+
+
+    <!-- TWITTER -->
+    <string name="twitter_consumer_key" translatable="false">rBscj5lwKypInk7NyDzUJXUCa</string>
+    <string name="twitter_consumer_secret" translatable="false">ygf5LC39cRpMpBvrCPpbUgjXMjp6FtRxBA8lvY2bbU4b0PF35d</string>
+
+
+
+    <string name="cancel">Auth cancel</string>
+    <string name="no_network">no network</string>
+    <string name="error_restaurant">error restaurant</string>
+    <string name="location_permission">location perm</string>
+    <string name="error_during_creating">error creating</string>
+    <string name="sign_in_with_twitter">Sign in with Twitter</string>
+    <string name="Sign_in_with_Facebook">Sign in with Facebook</string>
 
 </resources>
