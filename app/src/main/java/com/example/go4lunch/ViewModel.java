@@ -21,7 +21,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     LiveData<List<Result>> restaurants;
     LiveData<List<Workmate>> workmates;
     LiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> details;
-    MutableLiveData<List<Prediction>> predictions;
+    LiveData<List<Prediction>> predictions;
 
     RestaurantDataRepository restaurantDataRepository;
     UserDataRepository userDataRepository;
@@ -36,7 +36,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     public void init(android.location.Location location) {
         restaurants = restaurantDataRepository.getRestaurants(location);
         workmates = userDataRepository.GetWorkmates();
-
+        predictions = Transformations.switchMap(nomRestaurant, (address) -> autoCompleteRepository.getPlacesAutoComplete(address, location));
     }
 
     public void init(String placeId) {
@@ -48,17 +48,13 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
     }
 
     private final MutableLiveData<String> nomRestaurant = new MutableLiveData<>();
-    public final LiveData<List<Prediction>> predictionRestaurant  =
-            Transformations.switchMap(nomRestaurant, (address) -> autoCompleteRepository.getPlacesAutoComplete(address));
-
 
     public void setInput(String address) {
         nomRestaurant.setValue(address);
     }
 
 
-
-    public LiveData<List<Result>> getRestaurant() {
+    public LiveData<List<Result>> getRestaurants() {
         return restaurants;
     }
 
@@ -66,7 +62,7 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
         return workmates;
     }
 
-    public MutableLiveData<List<Prediction>> getPredictions() {
+    public LiveData<List<Prediction>> getPredictions() {
         return predictions;
     }
 
@@ -80,6 +76,10 @@ public class ViewModel extends androidx.lifecycle.ViewModel {
 
     public void updateChoice(String uid, String interestedBy) {
         userDataRepository.updateChoice(uid, interestedBy);
+    }
+
+    public void updateVicinity(String uid, String vicinity){
+        userDataRepository.updateVicinity(uid,vicinity);
     }
 
 }

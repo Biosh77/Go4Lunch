@@ -1,6 +1,7 @@
 package com.example.go4lunch.ui.detail;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -44,6 +45,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.example.go4lunch.ui.drawer.SettingsActivity.BOOLEAN;
 import static com.example.go4lunch.ui.list.ListViewHolder.MAX_RATING;
 import static com.example.go4lunch.ui.list.ListViewHolder.MAX_STAR;
 
@@ -79,6 +81,7 @@ public class DetailActivity extends BaseActivity {
     private String website;
     private String phone;
     private Result result;
+    private SharedPreferences mSharedPreferences;
 
 
     @Override
@@ -260,14 +263,19 @@ public class DetailActivity extends BaseActivity {
     }
 
     public void interestedBy() {
-        if (workmate.getInterestedBy() == null)
+        if (workmate.getInterestedBy() == null) {
             workmate.setInterestedBy(result.getName());
+            workmate.setVicinity(result.getVicinity());
+        }
         detailViewModel.updateChoice(workmate.getUid(), result.getName());
+        detailViewModel.updateVicinity(workmate.getUid(),result.getVicinity());
     }
 
     public void notInterestedBy() {
         workmate.setInterestedBy(null);
+        workmate.setVicinity(null);
         detailViewModel.updateChoice(workmate.getUid(), null);
+        detailViewModel.updateVicinity(workmate.getUid(),null);
     }
 }
 

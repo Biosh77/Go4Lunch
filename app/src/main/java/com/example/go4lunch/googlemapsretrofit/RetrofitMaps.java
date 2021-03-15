@@ -23,9 +23,12 @@ public interface RetrofitMaps {
     @GET("details/json?key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw")
     Call<Details> getDetails(@Query("place_id")String placeId);
 
-    @GET("autocomplete/json?key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw")
+    @GET("autocomplete/json?types=establishment&strictbounds&key=AIzaSyDZrTJrp5DeQR5mwPAoj14LWCVo7huGjzw")
     Call<AutoComplete> getPlacesAutoComplete(
-            @Query("input") String input
+            @Query("input") String input,
+            @Query("location") String location,
+            @Query("radius") int radius
+
     );
 
     Retrofit retrofit = new Retrofit.Builder()

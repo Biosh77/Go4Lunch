@@ -39,7 +39,6 @@
     <string name="on">on</string>
     <string name="language">Language</string>
     <string name="change_language">Change language</string>
-    <string name="notification_with">%1$s with %2$s</string>
 
     <!-- Others -->
     <string name="list_unit_distance">%1$sm</string>
@@ -50,14 +49,21 @@
     <!-- Notifications -->
     <string name="name">Go4Lunch</string>
     <string name="default_notification_channel_id">default id</string>
+    <string name="notifications_on_off">Choice Notification</string>
     <string name="notification_message"> address : %1$s</string>
+    <string name="notification_with">%1$s with %2$s</string>
     <string name="Alarm_manager_start">Alarm manager start</string>
     <string name="Alarm_manager_cancel">Alarm manager cancel</string>
 
 
+    <string name="english">ENGLISH</string>
+    <string name="french">FRENCH</string>
+
+
+
+
     <!-- FACEBOOK -->
     <string name="facebook_application_id" translatable="false">199776401444652</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb199776401444652</string>
 
 
 
@@ -75,19 +81,12 @@
     <string name="sign_in_with_twitter">Sign in with Twitter</string>
     <string name="Sign_in_with_Facebook">Sign in with Facebook</string>
     <string name="With">With</string>
-    <string name="located_at">located at</string>
+    <string name="located_at">"located at "</string>
     <string name="located_at_choice">"Your choice is located at "</string>
-
-    <string name="notifications_on_off">Choice Notifications</string>
-    <string name="english">ENGLISH</string>
-    <string name="french">FRENCH</string>
-
 
     <string name="en">English</string>
     <string name="fr">French</string>
     <string name="select">Select language</string>
     <string name="no_restaurant">No restaurant</string>
-
-
 
 </resources>

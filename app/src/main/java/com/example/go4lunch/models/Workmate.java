@@ -12,6 +12,7 @@ public class Workmate implements Serializable {
     @Nullable
     private String urlPicture;
     private String interestedBy;
+    private String vicinity;
     private List<String> likes;
 
     public Workmate() {
@@ -28,6 +29,7 @@ public class Workmate implements Serializable {
     public String getUsername() { return username; }
     public String getUrlPicture() { return urlPicture; }
     public String getInterestedBy() { return interestedBy; }
+    public String getVicinity(){return vicinity;}
     public List<String>getLikes(){return likes; }
 
     // --- SETTERS ---
@@ -35,5 +37,6 @@ public class Workmate implements Serializable {
     public void setUid(String uid) { this.uid = uid; }
     public void setUrlPicture(String urlPicture) { this.urlPicture = urlPicture; }
     public void setInterestedBy(String interestedBy) {this.interestedBy = interestedBy; }
+    public void setVicinity(String vicinity){this.vicinity = vicinity;}
     public void setLikes(List<String> likes) {this.likes = likes; }
 }

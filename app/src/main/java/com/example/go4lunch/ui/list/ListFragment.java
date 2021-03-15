@@ -103,7 +103,7 @@ public class ListFragment extends Fragment implements LocationListener, ListAdap
 
         mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
         mViewModel.init(onlyOneLocation);
-        mViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
+        mViewModel.getRestaurants().observe(this, new Observer<List<Result>>() {
                     @Override
                     public void onChanged(List<Result> results) {
                         try {

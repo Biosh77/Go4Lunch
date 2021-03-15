@@ -48,6 +48,8 @@ public class RestaurantDataRepository {
     }
 
 
+
+
     public MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> getDetailsRestaurant(String placeId) {
 
         MutableLiveData<com.example.go4lunch.googlemapsretrofit.pojo.details.Result> results = new MutableLiveData<>();

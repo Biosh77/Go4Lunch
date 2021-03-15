@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Go4Lunch</string>
+    <string name="title_activity_accueil">Accueil</string>
+    <string name="Map_View_Main">Carte</string>
+    <string name="List_View">Liste</string>
+    <string name="Workmates">Collègues</string>
+    <string name="LUNCH">VOTRE DÉJEUNER</string>
+    <string name="SETTINGS">PARAMÈTRES</string>
+    <string name="LogOut">DÉCONNEXION</string>
+    <string name="Website">SITE WEB</string>
+    <string name="Like">AIME</string>
+    <string name="Call">APPEL</string>
+
+
+    <!-- Used in NavigationDrawer -->
+    <string name="navigation_drawer_open">Ouvrir navigation drawer</string>
+    <string name="navigation_drawer_close">Fermer navigation drawer</string>
+
+    <!-- MAIN ACTIVITY -->
+
+    <string name="error_unknown_error">Une erreur inconnue s\'est produite</string>
+    <string name="info_no_username_found">Pas de nom d\'utilisateur</string>
+    <string name="info_no_email_found">Pas d\'email</string>
+
+    <!-- Restaurant -->
+    <string name="time_unavailable">Aucun horaire disponible</string>
+
+    <!-- Restaurant/Workmates -->
+
+    <string name="is_joining"> Vous rejoignez ce restaurant !</string>
+
+    <string name="is_eating_at">%1$s est en train de manger à %2$s</string>
+    <string name="has_not_decided_yet">%1$s n\'a pas encore décidé</string>
+
+    <!-- Settings -->
+    <string name="notification_title">Notifications</string>
+    <string name="off">off</string>
+    <string name="on">on</string>
+    <string name="language">Langue</string>
+    <string name="change_language">Changement de langue</string>
+
+    <!-- Others -->
+    <string name="list_unit_distance">%1$sm</string>
+    <string name="website_unavailable">Pas de Site web</string>
+    <string name="phone_unavailable">Pas de numéro de téléphone</string>
+    <string name="search_a_restaurant">Rechercher un restaurant</string>
+
+    <!-- Notifications -->
+    <string name="name">Go4Lunch</string>
+    <string name="default_notification_channel_id">default id</string>
+    <string name="notifications_on_off">Choix notifications</string>
+    <string name="notification_message"> adresse : %1$s</string>
+    <string name="notification_with">%1$s avec %2$s</string>
+    <string name="Alarm_manager_start">Alarme notification lancée</string>
+    <string name="Alarm_manager_cancel">Alarme notification annulée</string>
+
+
+    <string name="english">ANGLAIS</string>
+    <string name="french">FRANÇAIS</string>
+
+
+
+    <!-- FACEBOOK -->
+    <string name="facebook_application_id" translatable="false">199776401444652</string>
+
+
+
+    <!-- TWITTER -->
+    <string name="twitter_consumer_key" translatable="false">RdVzrHEhTkOhFL3KhPXcoDYUm</string>
+    <string name="twitter_consumer_secret" translatable="false">2ZXYkB5zsb9NGtqhZYtUsrw8pKH4BHJVHaxRJqPqle7IG3Pfgw</string>
+
+
+
+    <string name="cancel">Auth cancel</string>
+    <string name="no_network">no network</string>
+    <string name="Unknown_error">Unknown error</string>
+    <string name="location_permission">location perm</string>
+    <string name="error_during_creating">error creating</string>
+    <string name="sign_in_with_twitter">Sign in with Twitter</string>
+    <string name="Sign_in_with_Facebook">Sign in with Facebook</string>
+    <string name="With">avec</string>
+    <string name="located_at">"situé à "</string>
+    <string name="located_at_choice">"Votre choix est situé à "</string>
+
+    <string name="en">Anglais</string>
+    <string name="fr">Français</string>
+    <string name="select">Choisir langue</string>
+    <string name="no_restaurant">Pas de restaurant</string>
+
+
+</resources>

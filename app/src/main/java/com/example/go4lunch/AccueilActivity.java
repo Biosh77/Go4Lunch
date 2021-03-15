@@ -1,12 +1,21 @@
 package com.example.go4lunch;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,19 +23,26 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.go4lunch.base.BaseActivity;
+import com.example.go4lunch.googlemapsretrofit.pojo.autocomplete.Prediction;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
+
+import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.ui.autoComplete.PlacesAutoCompleteAdapter;
 import com.example.go4lunch.ui.detail.DetailActivity;
 import com.example.go4lunch.ui.drawer.SettingsActivity;
+import com.example.go4lunch.ui.list.ListFragment;
+import com.example.go4lunch.ui.map.MapFragment;
 import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,8 +50,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
@@ -46,28 +65,32 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
+import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
 
-public class AccueilActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class AccueilActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
 
     //FOR DESIGN
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private FirebaseAuth mAuth;
     private SearchView.SearchAutoComplete mSearchAutoComplete;
-    private PlacesAutoCompleteAdapter mAutoCompleteAdapter;
     private ViewModel mViewModel;
     private Workmate workmate;
     private Result result;
+    private android.location.Location onlyOneLocation;
+    private LocationManager locationManager;
+    private final int REQUEST_FINE_LOCATION = 1234;
     private List<Workmate> mWorkmates;
     private static final int SIGN_OUT_TASK = 10;
+
 
 
     @BindView(R.id.accueil_nav_view)
@@ -82,14 +105,16 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     @Override
     protected void onConfigureDesign() {
 
-        mAuth = FirebaseAuth.getInstance();
 
-        initSearchView();
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+        try {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates("gps", 0, 0, AccueilActivity.this);
+        } catch (SecurityException ex) {
+            Log.d("gps", "Location permission did not work!");
+        }
 
-
-        mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
-        mViewModel.init();
-        mViewModel.getWorkmates().observe(this, workmates -> mWorkmates= workmates);
 
         this.configureToolBar();
 
@@ -101,17 +126,37 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
         this.updateUIWhenCreating();
 
-
     }
+
+
 
     public void initSearchView() {
 
-        mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
-        mViewModel.predictionRestaurant.observe(this, predictions -> {
-            mSearchAutoComplete.setAdapter(new PlacesAutoCompleteAdapter(getApplicationContext(),predictions ));
-            mSearchAutoComplete.showDropDown();
-        });
 
+
+        mViewModel.getPredictions().observe(this, predictions -> {
+            List<Prediction> restaurantList = new ArrayList<>();
+            for (Prediction prediction : predictions) {
+                if (prediction.getTypes().contains("restaurant")){
+                    restaurantList.add(prediction);
+                }
+            }
+            mSearchAutoComplete.setAdapter(new PlacesAutoCompleteAdapter(getApplicationContext(), restaurantList));
+            mSearchAutoComplete.showDropDown();
+            mSearchAutoComplete.setOnItemClickListener((parent, view, position, id) -> {
+
+                workmate = currentWorkmate();
+
+                    Intent intent = new Intent(AccueilActivity.this, DetailActivity.class);
+                    intent.putExtra("id", restaurantList.get(position).getPlaceId());
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("workmate", workmate);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+
+        });
+        });
 
         SearchView searchView = findViewById(R.id.search_restaurant);
         mSearchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
@@ -125,9 +170,7 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
             @Override
             public boolean onQueryTextChange(String newText) {
                 mViewModel.setInput(newText);
-
-
-                return true;
+                return false;
             }
         });
     }
@@ -185,29 +228,61 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
         };
     }
 
-    public Workmate currentWorkmate(){
-        for (int i = 0; i < mWorkmates.size() ; i++) {
+
+    public Workmate currentWorkmate() {
+        for (int i = 0; i < mWorkmates.size(); i++) {
             if (UserDataRepository.getCurrentUser().getUid().equals(mWorkmates.get(i).getUid())) {
                 workmate = mWorkmates.get(i);
             }
-        }return workmate;
+        }
+        return workmate;
+    }
+
+
+
+    @Override
+    public void onLocationChanged(android.location.Location location) {
+        onlyOneLocation = location;
+
+        //locationManager.removeUpdates(AccueilActivity.this);
+
+        mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
+        mViewModel.init(onlyOneLocation);
+        mViewModel.getWorkmates().observe(this, workmates -> mWorkmates = workmates);
+
+        initSearchView();
     }
 
     private void lunch() {
 
-        workmate = currentWorkmate();
+        mViewModel.getRestaurants().observe(this, new Observer<List<Result>>() {
+            @Override
+            public void onChanged(List<Result> results) {
+                for (int i = 0; i < results.size(); i++) {
+                    result = results.get(i);
+                    workmate = currentWorkmate();
 
-        if (workmate.getInterestedBy() != null) {
+                }
 
-            Intent intent = new Intent(this, DetailActivity.class);
-            intent.putExtra("id", result.getPlaceId());
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("workmate", currentWorkmate());
-            intent.putExtras(bundle);
-            startActivity(intent);;
-        } else {
-            Toast.makeText(this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
-        }
+
+                if (workmate.getInterestedBy() == null) {
+                    Toast.makeText(AccueilActivity.this, getResources().getString(R.string.no_restaurant), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                for (Result result : results) {
+                    if (result.getName().equals(workmate.getInterestedBy())) {
+                        Intent intent = new Intent(AccueilActivity.this, DetailActivity.class);
+                        intent.putExtra("id", result.getPlaceId());
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("workmate", workmate);
+                        intent.putExtras(bundle);
+                        AccueilActivity.this.startActivity(intent);
+                    }
+                    }
+            }
+        });
+
     }
 
 
@@ -291,4 +366,36 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
         }
     }
 
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_FINE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("gps", "Location permission granted");
+                    try {
+                        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        locationManager.requestLocationUpdates("gps", 0, 0, this);
+                    } catch (SecurityException ex) {
+                        Log.d("gps", "Location permission did not work!");
+                    }
+                }
+                break;
+        }
+    }
 }

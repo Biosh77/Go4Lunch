@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,6 +27,7 @@ import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
+import com.example.go4lunch.ui.detail.DetailActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -53,6 +56,7 @@ public class MapFragment extends Fragment implements LocationListener {
 
     private List<Workmate> mWorkmates;
     private Workmate workmate;
+    private Result result;
 
 
     private ViewModel RestaurantViewModel;
@@ -135,17 +139,15 @@ public class MapFragment extends Fragment implements LocationListener {
         locationManager.removeUpdates(this);
 
         if (!isDetached()) {
+            if(!isAdded()) return;
             RestaurantViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
             RestaurantViewModel.init(onlyOneLocation);
-            RestaurantViewModel.getRestaurant().observe(this, new Observer<List<Result>>() {
+            RestaurantViewModel.getRestaurants().observe(this, new Observer<List<Result>>() {
                         @Override
                         public void onChanged(List<Result> results) {
                             RestaurantViewModel.getWorkmates().observe(MapFragment.this, workmates -> {
                                 mWorkmates = workmates;
-                          showMap(results);
-
-
-
+                                showMap(results);
                             });
                         }
                     }
@@ -153,17 +155,27 @@ public class MapFragment extends Fragment implements LocationListener {
         }
     }
 
-
-    private boolean getIfAWorkmateIsInterested(Result restaurant){
-        for (int i = 0; i < mWorkmates.size() ; i++)
-            if (restaurant.getName().equals(mWorkmates.get(i).getInterestedBy())) {
-                return true;
-            } return false;
+    public Workmate currentWorkmate() {
+        for (int i = 0; i < mWorkmates.size(); i++) {
+            if (UserDataRepository.getCurrentUser().getUid().equals(mWorkmates.get(i).getUid())) {
+                workmate = mWorkmates.get(i);
+            }
+        }
+        return workmate;
     }
 
-    public void showMap(List<Result> results){
+    private boolean getIfAWorkmateIsInterested(Result restaurant) {
+        for (int i = 0; i < mWorkmates.size(); i++)
+            if (restaurant.getName().equals(mWorkmates.get(i).getInterestedBy())) {
+                return true;
+            }
+        return false;
+    }
+
+    public void showMap(List<Result> results) {
         try {
             mMap.clear();
+
             // This loop will go through all the results and add marker on each location.
             for (int i = 0; i < results.size(); i++) {
 
@@ -171,13 +183,16 @@ public class MapFragment extends Fragment implements LocationListener {
                 Double lng = results.get(i).getGeometry().getLocation().getLng();
                 LatLng latLng = new LatLng(lat, lng);
                 String placeName = results.get(i).getName();
-                String vicinity = results.get(i).getVicinity();
+                //String vicinity = results.get(i).getVicinity();
+
+                result = results.get(i);
+                workmate = currentWorkmate();
 
                 BitmapDescriptor icon;
 
                 if (getIfAWorkmateIsInterested(results.get(i))) {
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_marker_green);
-                }else {
+                } else {
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_marker_orange);
                 }
 
@@ -186,21 +201,42 @@ public class MapFragment extends Fragment implements LocationListener {
                 // Position of Marker on Map
                 markerOptions.position(latLng);
                 // Adding Title to the Marker
-                markerOptions.title(placeName + " : " + vicinity);
+                markerOptions.title(placeName);
                 // Adding Marker to the Camera.
                 mMap.addMarker(markerOptions);
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-            }
 
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        for (Result result : results) {
+                            if (marker.getTitle().equals(result.getName())) {
+                                Intent intent = new Intent(MapFragment.this.getContext(), DetailActivity.class);
+                                intent.putExtra("id", result.getPlaceId());
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("workmate", workmate);
+                                intent.putExtras(bundle);
+                                MapFragment.this.startActivity(intent);
 
-        } catch (
-                Exception e) {
-            Log.d("onResponse", "There is an error");
-            e.printStackTrace();
+                            }
+                        }
+                        return true;
+                    }
+                });
         }
+
+
+    } catch(
+    Exception e)
+
+    {
+        Log.d("onResponse", "There is an error");
+        e.printStackTrace();
     }
+
+}
 
 
     @Override

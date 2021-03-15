@@ -17,13 +17,15 @@ import retrofit.Retrofit;
 
 public class AutoCompleteRepository {
 
-    public MutableLiveData<List<Prediction>> getPlacesAutoComplete(String input){
+    private int PROXIMITY_RADIUS = 5000;
+
+    public MutableLiveData<List<Prediction>> getPlacesAutoComplete(String input,android.location.Location location){
 
         MutableLiveData<List<Prediction>> predictions = new MutableLiveData<>();
 
         RetrofitMaps autoComplete = RetrofitMaps.retrofit.create(RetrofitMaps.class);
 
-        Call<AutoComplete> call = autoComplete.getPlacesAutoComplete(input);
+        Call<AutoComplete> call = autoComplete.getPlacesAutoComplete(input,location.getLatitude() + "," + location.getLongitude(), PROXIMITY_RADIUS);
 
         call.enqueue(new Callback<AutoComplete>() {
             @Override

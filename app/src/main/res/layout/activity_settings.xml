@@ -34,11 +34,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textAlignment="center"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:text="Switch Notifications ON/OFF"
+            android:text="@string/notifications_on_off"
+            android:textAlignment="center"
             android:textColor="@color/colorBlack" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -53,6 +53,48 @@
             android:switchMinWidth="60dp"
             android:textOff="@string/off"
             android:textOn="@string/on" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/language"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/langue_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:text="@string/change_language"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            />
+
 
     </LinearLayout>
 

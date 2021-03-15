@@ -110,6 +110,23 @@ public class UserDataRepository {
     }
 
 
+    public void updateVicinity(String uid, String vicinity) {
+
+        DocumentReference RefChoice = getUserCollection().document(uid);
+
+        RefChoice.update("vicinity", vicinity).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot successfully updated!");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Error updating document", e);
+            }
+        });
+    }
+
     public static Task<DocumentSnapshot> getWorkmate(String uid) {
         return UserDataRepository.getUserCollection().document(uid).get();
     }
@@ -117,8 +134,6 @@ public class UserDataRepository {
     public static Task<QuerySnapshot> getWorkmatesWhoHaveSameChoice(String interestedBy) {
         return getUserCollection().whereEqualTo("interestedBy", interestedBy).get();
     }
-
-
 
     public static FirebaseUser getCurrentUser(){return FirebaseAuth.getInstance().getCurrentUser();}
 

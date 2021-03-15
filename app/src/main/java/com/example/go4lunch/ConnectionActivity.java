@@ -194,7 +194,7 @@ public class ConnectionActivity extends BaseActivity {
                 } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Toast.makeText(this, getResources().getString(R.string.no_network), Toast.LENGTH_SHORT).show();
                 } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                    Toast.makeText(this, getResources().getString(R.string.error_restaurant), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.Unknown_error), Toast.LENGTH_SHORT).show();
                 }
             }
         }
