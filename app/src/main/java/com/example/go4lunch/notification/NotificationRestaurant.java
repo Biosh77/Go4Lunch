@@ -1,32 +1,30 @@
 package com.example.go4lunch.notification;
 
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
-import com.example.go4lunch.AccueilActivity;
 import com.example.go4lunch.R;
 
 import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.go4lunch.repository.UserDataRepository.getCurrentUser;
 
 
@@ -35,11 +33,15 @@ public class NotificationRestaurant extends BroadcastReceiver {
     private Workmate workmate;
     private String messageBody;
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        if (intent.getAction() != null && intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            Intent serviceIntent = new Intent(context, MyService.class);
+            context.startService(serviceIntent);
+        } else {
             retrievesWorkmateData(context);
-
+        }
     }
 
 
@@ -113,5 +115,4 @@ public class NotificationRestaurant extends BroadcastReceiver {
         notificationManager.notify(1, notificationBuilder.build());
     }
 }
-
 

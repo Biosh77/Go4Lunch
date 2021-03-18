@@ -4,18 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,29 +23,16 @@ import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
 
-import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.ui.autoComplete.PlacesAutoCompleteAdapter;
 import com.example.go4lunch.ui.detail.DetailActivity;
 import com.example.go4lunch.ui.drawer.SettingsActivity;
-import com.example.go4lunch.ui.list.ListFragment;
-import com.example.go4lunch.ui.map.MapFragment;
-import com.facebook.login.LoginManager;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
@@ -67,12 +49,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.google.android.libraries.places.api.model.Place.Type.RESTAURANT;
 
 
 public class AccueilActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
@@ -160,7 +138,9 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
 
         SearchView searchView = findViewById(R.id.search_restaurant);
         mSearchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        searchView.setQueryHint("search a restaurant");
+        int options = searchView.getImeOptions();
+        searchView.setImeOptions(options| EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        searchView.setQueryHint(getResources().getString(R.string.search_a_restaurant));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -244,7 +224,7 @@ public class AccueilActivity extends BaseActivity implements NavigationView.OnNa
     public void onLocationChanged(android.location.Location location) {
         onlyOneLocation = location;
 
-        //locationManager.removeUpdates(AccueilActivity.this);
+        locationManager.removeUpdates(AccueilActivity.this);
 
         mViewModel = new ViewModelProvider(this, Injection.provideViewModelFactory()).get(ViewModel.class);
         mViewModel.init(onlyOneLocation);

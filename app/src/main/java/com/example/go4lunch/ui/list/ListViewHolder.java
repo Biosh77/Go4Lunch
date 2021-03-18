@@ -24,7 +24,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
-import bolts.Task;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

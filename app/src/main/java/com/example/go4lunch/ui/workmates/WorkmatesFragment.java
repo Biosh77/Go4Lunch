@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.go4lunch.AccueilActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.ViewModel;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
@@ -31,14 +29,11 @@ import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.ui.detail.DetailActivity;
-import com.example.go4lunch.ui.list.ListFragment;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.content.ContentValues.TAG;
 
 public class WorkmatesFragment extends Fragment implements WorkmatesAdapter.OnItemClickListener, LocationListener {
 

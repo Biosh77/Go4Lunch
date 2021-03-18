@@ -1,66 +1,35 @@
 package com.example.go4lunch;
 
 
-import android.database.Observable;
-import android.view.KeyEvent;
 import android.widget.AutoCompleteTextView;
 
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.contrib.DrawerActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner;
-import androidx.test.rule.ActivityTestRule;
 
-import com.example.go4lunch.googlemapsretrofit.RetrofitMaps;
-import com.example.go4lunch.googlemapsretrofit.pojo.autocomplete.AutoComplete;
-import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.NearbySearch;
-import com.example.go4lunch.models.Workmate;
-import com.example.go4lunch.repository.RestaurantDataRepository;
-import com.example.go4lunch.repository.UserDataRepository;
-
-import org.hamcrest.Matchers;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.meta.When;
-
-import io.reactivex.observers.TestObserver;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressBack;
-import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.DrawerActions.close;
 import static androidx.test.espresso.contrib.DrawerMatchers.isOpen;
-import static androidx.test.espresso.contrib.NavigationViewActions.navigateTo;
 import static androidx.test.espresso.matcher.ViewMatchers.hasMinimumChildCount;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 
 
@@ -75,14 +44,6 @@ public class InstrumentedTest {
 
     @Rule
     public ActivityScenarioRule<AccueilActivity> rule = new ActivityScenarioRule<>(AccueilActivity.class);
-
-
-    public static class GoogleAPITest {
-
-
-        @Test
-        public void myTest() throws InterruptedException {
-        }
 
 
         @Test
@@ -174,5 +135,7 @@ public class InstrumentedTest {
                     .perform(click());
         }
 
-    }
+
+
+
 }

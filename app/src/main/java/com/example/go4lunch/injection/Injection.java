@@ -7,9 +7,6 @@ import com.example.go4lunch.repository.AutoCompleteRepository;
 import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
 
-
-import java.util.List;
-
 public class Injection {
 
 

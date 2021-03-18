@@ -8,34 +8,38 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 
 import com.example.go4lunch.AccueilActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.base.BaseActivity;
+
 import com.example.go4lunch.notification.NotificationRestaurant;
+
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.OnCheckedChanged;
 
 
 public class SettingsActivity extends BaseActivity {
@@ -64,18 +68,17 @@ public class SettingsActivity extends BaseActivity {
     @Override
     protected void onConfigureDesign() {
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         configureToolbar();
         spinnerLanguage();
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor editor = mSharedPreferences.edit();
+        boolean notificationBoolean = mSharedPreferences.getBoolean(BOOLEAN, false);
 
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(this, NotificationRestaurant.class);
         pendingIntent = PendingIntent.getBroadcast(this, 1, alarmIntent, 0);
 
-
-        final SharedPreferences.Editor editor = mSharedPreferences.edit();
-        boolean notificationBoolean = mSharedPreferences.getBoolean(BOOLEAN, false);
 
         if (notificationBoolean) {
             mSwitch.setChecked(true);
@@ -97,30 +100,21 @@ public class SettingsActivity extends BaseActivity {
 
     private void startAlarm() {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 11);
-        calendar.set(Calendar.MINUTE, 52);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis(),60000, pendingIntent);
+        Calendar cal = Calendar.getInstance();
+        // If it is after noon then we add one day to the meter of release of the alarm
+        if (cal.get(Calendar.HOUR_OF_DAY) > 12) cal.add(Calendar.DATE, 1);
+        // The alarm next one will thus be at 12:00 am tomorrow
+        cal.set(Calendar.HOUR_OF_DAY, 12);
+        cal.set(Calendar.MINUTE, 0);
 
-        /*
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        }
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),AlarmManager.INTERVAL_DAY, pendingIntent);
 
-         */
     }
 
     private void cancelAlarm() {
         alarmManager.cancel(pendingIntent);
     }
-
-
 
 
     private void configureToolbar() {

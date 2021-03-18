@@ -11,12 +11,10 @@ import android.widget.Toast;
 import com.example.go4lunch.models.Workmate;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.base.BaseActivity;
-import com.facebook.login.widget.LoginButton;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.SignInButton;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.util.Collections;
 

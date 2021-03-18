@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.models.Workmate;
-import com.example.go4lunch.ui.workmates.WorkmatesViewHolder;
 
 import java.util.List;
 

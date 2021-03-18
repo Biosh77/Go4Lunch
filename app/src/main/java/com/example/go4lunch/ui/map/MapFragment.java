@@ -25,7 +25,6 @@ import com.example.go4lunch.ViewModel;
 import com.example.go4lunch.googlemapsretrofit.pojo.nearbyplaces.Result;
 import com.example.go4lunch.injection.Injection;
 import com.example.go4lunch.models.Workmate;
-import com.example.go4lunch.repository.RestaurantDataRepository;
 import com.example.go4lunch.repository.UserDataRepository;
 import com.example.go4lunch.ui.detail.DetailActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
