@@ -68,22 +68,6 @@ public class InstrumentedTest {
 
 
         @Test
-        public void myRestaurantList_shouldNotBeEmpty() throws InterruptedException {
-            Thread.sleep(10000);
-            onView(withId(R.id.List_View)).perform(click());
-            onView(ViewMatchers.withId(R.id.List_View))
-                    .check(matches(hasMinimumChildCount(1)));
-        }
-
-        @Test
-        public void myWorkmatesList_shouldNotBeEmpty() throws InterruptedException {
-            onView(withId(R.id.Workmates)).perform(click());
-            Thread.sleep(20000);
-            onView(ViewMatchers.withId(R.id.workmates_recycler))
-                    .check(matches(hasMinimumChildCount(1)));
-        }
-
-        @Test
         public void googleMapClick() throws InterruptedException {
             Thread.sleep(10000);
             onView(withContentDescription("Google Map")).perform(click());
