@@ -23,3 +23,4 @@ L’application Go4Lunch est une application collaborative utilisée par tous le
 - ViewModel
 - RecyclerView
 - FragmentManager
+- Notification 
